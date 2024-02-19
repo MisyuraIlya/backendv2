@@ -5,7 +5,6 @@ namespace App\Command;
 use App\Entity\MediaObject;
 use App\Entity\ProductImages;
 use App\Erp\Core\ErpManager;
-use App\Repository\ErrorRepository;
 use App\Repository\MediaObjectRepository;
 use App\Repository\ProductImagesRepository;
 use App\Repository\ProductRepository;
@@ -18,7 +17,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 #[AsCommand(
     name: 'CronImageUploader',
@@ -30,7 +28,7 @@ class CronImageUploaderCommand extends Command
         private readonly ProductRepository $productRepository,
         private readonly ProductImagesRepository $productImagesRepository,
         private readonly MediaObjectRepository $mediaObjectRepository,
-        private readonly HttpClientInterface $httpClient,
+        private readonly ErpManager $erpManager
     )
     {
         parent::__construct();
@@ -128,18 +126,18 @@ class CronImageUploaderCommand extends Command
 
     private function fetchImageFromApi(string $sku)
     {
-        $res = (new ErpManager($this->httpClient))->GetProductImage($sku);
-        try {
-            if($res->image){
-                list($type, $data) = explode(';', $res->image);
-                list(, $data)      = explode(',', $data);
-                list(, $suffix)    = explode('/', $type);
-                $decodedData = base64_decode($data);
-                file_put_contents("public/imagesResized/$sku." . $suffix, $decodedData);
-            }
-        } catch (\Exception $e) {
-
-        }
+//        $res = $this->erpManager->GetProductImage($sku);
+//        try {
+//            if($res->image){
+//                list($type, $data) = explode(';', $res->image);
+//                list(, $data)      = explode(',', $data);
+//                list(, $suffix)    = explode('/', $type);
+//                $decodedData = base64_decode($data);
+//                file_put_contents("public/imagesResized/$sku." . $suffix, $decodedData);
+//            }
+//        } catch (\Exception $e) {
+//
+//        }
 
     }
 }

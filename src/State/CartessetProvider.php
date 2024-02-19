@@ -11,8 +11,8 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class CartessetProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly RequestStack $requestStack,
+        private readonly ErpManager $erpManager,
     )
     {
         $this->fromDate = $this->requestStack->getCurrentRequest()->query->get('from');
@@ -31,7 +31,7 @@ class CartessetProvider implements ProviderInterface
         $dateFrom = \DateTimeImmutable::createFromFormat($format, $this->fromDate);
         $dateTo = \DateTimeImmutable::createFromFormat($format, $this->toDate);
 
-        $response = (new ErpManager($this->httpClient))->GetCartesset(
+        $response = $this->erpManager->GetCartesset(
             $uriVariables['userExtId'],
             $dateFrom,
             $dateTo,

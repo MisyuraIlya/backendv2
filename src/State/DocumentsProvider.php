@@ -11,17 +11,16 @@ use App\Erp\Core\ErpManager;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class DocumentsProvider implements ProviderInterface
 {
     private $userPriceLists = [];
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly RequestStack $requestStack,
         private Pagination $pagination,
         private readonly ProductRepository $productRepository,
         private readonly UserRepository $userRepository,
+        private readonly ErpManager $erpManager,
     )
     {
         $this->userExId = $this->requestStack->getCurrentRequest()->query->get('userExId');
@@ -61,7 +60,7 @@ class DocumentsProvider implements ProviderInterface
         $dateFrom = \DateTimeImmutable::createFromFormat($format, $this->fromDate);
         $dateTo = \DateTimeImmutable::createFromFormat($format, $this->toDate);
 
-        $response = (new ErpManager($this->httpClient))->GetDocuments(
+        $response = $this->erpManager->GetDocuments(
             $this->userExId,
             $dateFrom,
             $dateTo,
@@ -76,7 +75,7 @@ class DocumentsProvider implements ProviderInterface
 
     private function GetHandler($operation,$uriVariables,$context)
     {
-        $response = (new ErpManager($this->httpClient))->GetDocumentsItem($uriVariables['documentNumber'],$this->documentItemType);
+        $response = $this->erpManager->GetDocumentsItem($uriVariables['documentNumber'],$this->documentItemType);
         $makats = [];
         foreach ($response->products as &$itemRec){
             $findProd = $this->productRepository->findOneBySkuAndToArray($itemRec->sku);
@@ -89,7 +88,7 @@ class DocumentsProvider implements ProviderInterface
         }
 
         try {
-            $handlePrice = (new ErpManager($this->httpClient))->GetPricesOnline($makats,$this->userPriceLists,$this->userExId);
+            $handlePrice = $this->erpManager->GetPricesOnline($makats,$this->userPriceLists,$this->userExId);
             foreach ($handlePrice->prices as $price){
                 foreach ($response->products as $subRec){
                     if($price->sku == $subRec->product['sku']){

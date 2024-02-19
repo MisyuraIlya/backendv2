@@ -2,21 +2,17 @@
 
 namespace App\Cron\Core;
 
-use App\Entity\Error;
 use App\Entity\Product;
 use App\Erp\Core\ErpManager;
 use App\Repository\CategoryRepository;
-use App\Repository\ErrorRepository;
 use App\Repository\ProductRepository;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GetProducts
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
-        private CategoryRepository $categoryRepository,
-        private ProductRepository $productRepository,
-        private readonly ErrorRepository $errorRepository,
+        private readonly CategoryRepository $categoryRepository,
+        private readonly ProductRepository $productRepository,
+        private readonly ErpManager $erpManager,
     )
     {
     }
@@ -26,7 +22,7 @@ class GetProducts
         $skip = 0;
         $pageSize = 30;
         do {
-            $res = (new ErpManager($this->httpClient,$this->errorRepository))->GetProducts($pageSize, $skip);
+            $res = $this->erpManager->GetProducts($pageSize, $skip);
             if (!empty($res->products)) {
                 foreach ($res->products as $key => $itemRec) {
                     $product = $this->productRepository->findOneBySku($itemRec->sku);

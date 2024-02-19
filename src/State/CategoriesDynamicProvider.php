@@ -10,20 +10,18 @@ use App\Repository\CategoryRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class CategoriesDynamicProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly RequestStack $requestStack,
         #[Autowire(service: CollectionProvider::class)] private ProviderInterface $collectionProvider,
         private readonly UserRepository $userRepository,
         private readonly CategoryRepository $categoryRepository,
+        private readonly ErpManager $erpManager,
 
     )
     {
-        $this->ErpManager = new ErpManager($httpClient);
         $this->isOnlineMigvan = $_ENV['IS_ONLINE_MIGVAN'] === "true";
         $this->isUsedMigvan = $_ENV['IS_USED_MIGVAN'] === "true";
     }

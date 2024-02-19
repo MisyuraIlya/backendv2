@@ -4,27 +4,24 @@ namespace App\Cron\Core;
 
 use App\Entity\PackProducts;
 use App\Erp\Core\ErpManager;
-use App\Repository\ErrorRepository;
 use App\Repository\PackMainRepository;
 use App\Repository\PackProductsRepository;
 use App\Repository\ProductRepository;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GetProductPacks
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly PackMainRepository $packMainRepository,
         private readonly PackProductsRepository $packProductsRepository,
-        private readonly ErrorRepository $errorRepository,
         private readonly ProductRepository $productRepository,
+        private readonly ErpManager $erpManager,
     )
     {
     }
 
     public function sync()
     {
-        $response = (new ErpManager($this->httpClient, $this->errorRepository))->GetPackProducts();
+        $response = $this->erpManager->GetPackProducts();
 
         foreach ($response->packs as $itemRec){
             $findProduct = $this->productRepository->findOneBySku($itemRec->sku);

@@ -15,7 +15,6 @@ use App\Repository\HistoryDetailedRepository;
 use App\Repository\HistoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SendOrderProcessor implements ProcessorInterface
 {
@@ -24,13 +23,11 @@ class SendOrderProcessor implements ProcessorInterface
         private HistoryDetailedRepository $historyDetailedRepository,
         private UserRepository $userRepository,
         private ProductRepository $productRepository,
-        private HttpClientInterface $httpClient,
+        private readonly ErpManager $erpManager,
     )
     {
-        $this->ErpManager = new ErpManager($httpClient);
         $this->isMustDeliveryPrice = $_ENV['IS_MUST_DELIVERY_PRICE'] === "true";
         $this->minimumDeliveryPrice = (int) $_ENV['MINIMUM_DELIVERY_PRICE'] ;
-
         $this->isMaxOrderDiscount = (int) $_ENV['IS_MAX_ORDER_DISCOUNT'] === "true";
         $this->maxPriceForDiscount = (int) $_ENV['MAX_PRICE_FOR_DISCOUNT'] ;
         $this->discountPrecentForMaxPrice = (int) $_ENV['DISCOUNT_PRECENT_FOR_MAX_PRICE'] ;
@@ -61,7 +58,7 @@ class SendOrderProcessor implements ProcessorInterface
             $this->HandleHistoryDetailed($productRec, $history);
         }
 
-        $orderNumber = (new ErpManager($this->httpClient))->SendOrder($history->getId(), $this->historyRepository, $this->historyDetailedRepository);
+        $orderNumber = $this->erpManager->SendOrder($history->getId(), $this->historyRepository, $this->historyDetailedRepository);
         if(!$orderNumber){
             if($findAgent && $dto->agentId && !$findAgent->isIsAllowOrder()){
                 $res = new \stdClass();

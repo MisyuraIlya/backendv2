@@ -2,41 +2,29 @@
 
 namespace App\Cron\Core;
 
-use App\Entity\Error;
 use App\Erp\Core\ErpManager;
-use App\Repository\ErrorRepository;
 use App\Repository\ProductRepository;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GetStocks
 {
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
-        private ProductRepository $productRepository,
-        private readonly ErrorRepository $errorRepository,
+        private readonly ProductRepository $productRepository,
+        private readonly ErpManager $erpManager
     )
     {
     }
 
     public function sync()
     {
+        $res = $this->erpManager->GetStocks();
+        foreach ($res->stocks as $itemRec){
+            $product = $this->productRepository->findOneBySku($itemRec->sku);
+            if($product){
+                $product->setStock($itemRec->stock);
+                $this->productRepository->createProduct($product, true);
 
-        try {
-            $res = (new ErpManager($this->httpClient))->GetStocks();
-            foreach ($res->stocks as $itemRec){
-                $product = $this->productRepository->findOneBySku($itemRec->sku);
-                if($product){
-                    $product->setStock($itemRec->stock);
-                    $this->productRepository->createProduct($product, true);
-
-                }
             }
-        } catch (\Exception $e) {
-            $error = new Error();
-            $error->setFunctionName('cron get stocks');
-            $error->setDescription($e->getMessage());
-            $this->errorRepository->createError($error, true);
         }
     }
 }

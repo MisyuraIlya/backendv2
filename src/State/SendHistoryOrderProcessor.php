@@ -8,10 +8,10 @@ use App\ApiResource\SendHistoryOrder;
 use App\Entity\History;
 use App\Entity\User;
 use App\Enum\PurchaseStatus;
+use App\Erp\Core\ErpManager;
 use App\Repository\HistoryDetailedRepository;
 use App\Repository\HistoryRepository;
 use App\Repository\UserRepository;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class SendHistoryOrderProcessor implements ProcessorInterface
 {
@@ -20,7 +20,7 @@ class SendHistoryOrderProcessor implements ProcessorInterface
         private HistoryRepository $historyRepository,
         private HistoryDetailedRepository $historyDetailedRepository,
         private UserRepository $userRepository,
-        private HttpClientInterface $httpClient,
+        private readonly ErpManager $erpManager,
     )
     {
     }
@@ -33,7 +33,7 @@ class SendHistoryOrderProcessor implements ProcessorInterface
         $findAgent = $this->userRepository->findOneById($data->getAgentApprovedId());
         if(!$findAgent) throw new \Exception('לא נמצא סוכן');
         if(!$findHistory) throw new \Exception('לא נמצא הזמנה כזאת');
-//        $orderNumber = (new ErpManager($this->httpClient))->SendOrder($data->getHistoryId(), $this->historyRepository, $this->historyDetailedRepository);
+//        $orderNumber = $this->erpManager->SendOrder($data->getHistoryId(), $this->historyRepository, $this->historyDetailedRepository);
         $orderNumber = '123123';
         $this->SaveOrderNumber($orderNumber, $findHistory, $findAgent);
 

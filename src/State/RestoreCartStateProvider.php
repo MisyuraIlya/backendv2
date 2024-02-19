@@ -11,18 +11,16 @@ use App\Erp\Core\ErpManager;
 use App\Repository\HistoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class RestoreCartStateProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly HistoryRepository $historyRepository,
         private readonly UserRepository $userRepository,
         private readonly ProductRepository $productRepository,
+        private readonly ErpManager $erpManager,
     )
     {
-        $this->ErpManager = new ErpManager($this->httpClient);
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -48,7 +46,7 @@ class RestoreCartStateProvider implements ProviderInterface
     private function handleOnline($orderNumber, User $user, $priceType, $table): CartsDto
     {
         $result = new CartsDto();
-        $data = $this->ErpManager->GetDocumentsItem($orderNumber,$table);
+        $data = $this->erpManager->GetDocumentsItem($orderNumber,$table);
         $skus = [];
         foreach ($data->products as $itemRec){
             $skus[] = $itemRec->sku;
@@ -74,7 +72,7 @@ class RestoreCartStateProvider implements ProviderInterface
                 $userPriceLists[] = $itemRec->getPriceListId()->getExtId();
             }
             if(!empty($userPriceLists)){
-                $prices = $this->ErpManager->GetPricesOnline($skus,$userPriceLists,$user->getExtId());
+                $prices = $this->erpManager->GetPricesOnline($skus,$userPriceLists,$user->getExtId());
                 foreach ($result->cart as $itemRec){
                     foreach ($prices->prices as $priceRec){
                         if($itemRec->sku === $priceRec->sku){
@@ -152,7 +150,7 @@ class RestoreCartStateProvider implements ProviderInterface
                 $priceLists[] = $itemRec->getPriceListId()->getExtId();
             }
             if($priceLists){
-                $prices = $this->ErpManager->GetPricesOnline($skus, $priceLists, $user->getExtId());
+                $prices = $this->erpManager->GetPricesOnline($skus, $priceLists, $user->getExtId());
                 foreach ($result->cart as $itemRec){
                     foreach ($prices->prices as $priceRec){
                         if($itemRec->getSku() === $priceRec->sku){
@@ -182,8 +180,8 @@ class RestoreCartStateProvider implements ProviderInterface
 
 
         $inStockProducts = new CartsDto();
-        $stocks = $this->ErpManager->GetStocksOnline($skus);
-        $newStocks = (new ErpManager($this->httpClient, $this->errorRepository))->GetStocksOnline($skus);
+        $stocks = $this->erpManager->GetStocksOnline($skus);
+        $newStocks = $this->erpManager->GetStocksOnline($skus);
         foreach ($result->cart as $itemRec){
             foreach ($newStocks->stocks as $stockRec){
                 if($itemRec->sku === $stockRec->sku){

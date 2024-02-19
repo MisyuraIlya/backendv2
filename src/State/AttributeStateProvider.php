@@ -10,19 +10,17 @@ use App\Repository\AttributeMainRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class AttributeStateProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly RequestStack $requestStack,
         private readonly AttributeMainRepository $attributeMainRepository,
         #[Autowire(service: CollectionProvider::class)] private ProviderInterface $collectionProvider,
         private readonly UserRepository $userRepository,
+        private readonly ErpManager $erpManager,
     )
     {
-        $this->ErpManager = new ErpManager($httpClient);
         $this->isOnlineMigvan = $_ENV['IS_ONLINE_MIGVAN'] === "true";
         $this->isUsedMigvan = $_ENV['IS_USED_MIGVAN'] === "true";
     }
@@ -35,7 +33,7 @@ class AttributeStateProvider implements ProviderInterface
             $migvanOnline = [];
             if($this->isUsedMigvan && $userExtId) {
                 if($this->isOnlineMigvan) {
-                    $migvanOnline = ($this->ErpManager->GetMigvanOnline($userExtId))->migvans;
+                    $migvanOnline = $this->erpManager->GetMigvanOnline($userExtId)->migvans;
                     if(count($migvanOnline) == 0) {
                         $userExtId = null;
                     }
@@ -46,7 +44,7 @@ class AttributeStateProvider implements ProviderInterface
                     }
                 }
             } else {
-                $userExtId = null; // if there no migvan then userExtId must be null to fetch all categories
+                $userExtId = null;
             }
 
             $lvl1 = $this->requestStack->getCurrentRequest()->attributes->get('lvl1');

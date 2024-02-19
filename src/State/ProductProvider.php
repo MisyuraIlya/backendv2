@@ -16,23 +16,21 @@ use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ProductProvider implements ProviderInterface
 {
 
     private array $skus = [];
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly RequestStack $requestStack,
         #[Autowire(service: CollectionProvider::class)] private ProviderInterface $collectionProvider,
         #[Autowire(service: ItemProvider::class)] private ProviderInterface $itemProvider,
         private readonly PriceListUserRepository $priceListUserRepository,
         private readonly UserRepository $userRepository,
         private readonly ProductRepository $productRepository,
+        private readonly ErpManager $erpManager,
     )
     {
-        $this->ErpManager = new ErpManager($httpClient);
         $this->isOnlinePrice = $_ENV['IS_ONLINE_PRICE'] === "true";
         $this->isOnlineStock = $_ENV['IS_ONLINE_STOCK'] === "true";
         $this->isOnlineMigvan = $_ENV['IS_ONLINE_MIGVAN'] === "true";
@@ -50,7 +48,7 @@ class ProductProvider implements ProviderInterface
             $userDb = '';
         }
         if($this->isOnlineMigvan && $userExtId && $this->isUsedMigvan){
-            $migvanOnline = ($this->ErpManager->GetMigvanOnline($userExtId))->migvans;
+            $migvanOnline = $this->erpManager->GetMigvanOnline($userExtId)->migvans;
         }
         $data = $this->GetDbData($migvanOnline);
         assert($data instanceof Paginator);
@@ -87,16 +85,6 @@ class ProductProvider implements ProviderInterface
         $attributes =  $this->requestStack->getCurrentRequest()->get('attributes');
         $searchValue = $this->requestStack->getCurrentRequest()->get('search');
         $makatsForSearch = [];
-        if($documentType == 'recommended'){
-            $makatsForSearch = $this->HandleRecommended($userExtId);
-        }
-        if($documentType == 'regular') {
-            $makatsForSearch = $this->HandleRegular($userExtId);
-        }
-        if(($documentType == 'recommended'  ||  $documentType == 'regular') && empty($makatsForSearch)) {
-            return [];
-        }
-
         $data = $this->productRepository->getCatalog($page, $userExtId, $itemsPerPage, $lvl1, $lvl2, $lvl3, $orderBy, $attributes,$searchValue, $makatsForSearch,$documentType);
         $this->GetSkus($data);
         return $data;
@@ -113,7 +101,7 @@ class ProductProvider implements ProviderInterface
         }
         //IF THERE NO PRICE LIST GO TO DB BASE PRICE
         if(!empty($priceListsArr) && $userExtId){
-            $response = $this->ErpManager->GetPricesOnline($this->skus,$priceListsArr,$userExtId);
+            $response = $this->erpManager->GetPricesOnline($this->skus,$priceListsArr,$userExtId);
             foreach ($response->prices as $priceRec){
                 foreach ($data as $dataRec){
                     assert($dataRec instanceof Product);
@@ -154,7 +142,7 @@ class ProductProvider implements ProviderInterface
 
     private function GetOnlineStock(Paginator $data)
     {
-        $response = $this->ErpManager->GetStocksOnline($this->skus);
+        $response = $this->erpManager->GetStocksOnline($this->skus);
         foreach ($response->stocks as $stockRec){
             foreach ($data as $itemRec){
                 assert($itemRec instanceof Product);
@@ -172,16 +160,6 @@ class ProductProvider implements ProviderInterface
             $arraySkus[] = $entity->getSku();
         }
         $this->skus =  $arraySkus;
-    }
-
-    private function HandleRecommended(string $userExtId)
-    {
-       return  $this->ErpManager->GetRecommendedProductsByUserExtId($userExtId);
-    }
-
-    private function HandleRegular(string $userExtId)
-    {
-        return  $this->ErpManager->GetRegularProductsByUserExtId($userExtId);
     }
 
 

@@ -1,21 +1,17 @@
 <?php
 
 namespace App\Cron\Core;
-use App\Entity\Error;
 use App\Entity\User;
 use App\Enum\UsersTypes;
 use App\Erp\Core\ErpManager;
-use App\Repository\ErrorRepository;
 use App\Repository\UserRepository;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GetUsers
 {
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly UserRepository $repository,
-        private readonly ErrorRepository $errorRepository,
+        private readonly ErpManager $erpManager,
     )
     {}
 
@@ -49,9 +45,10 @@ class GetUsers
             }
         }
     }
+
     public function sync()
     {
-        $response = (new ErpManager($this->httpClient, $this->errorRepository))->GetUsers();
+        $response = $this->erpManager->GetUsers();
         foreach ($response->users as $itemRec) {
             $user = $this->repository->findOneByExIdAndPhone($itemRec->userExId, $itemRec->phone);
             if($itemRec->userExId) {

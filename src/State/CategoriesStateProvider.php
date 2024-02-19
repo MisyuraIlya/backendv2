@@ -15,7 +15,6 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 class CategoriesStateProvider implements ProviderInterface
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly RequestStack $requestStack,
         #[Autowire(service: CollectionProvider::class)] private ProviderInterface $collectionProvider,
         private readonly UserRepository $userRepository,
@@ -23,7 +22,6 @@ class CategoriesStateProvider implements ProviderInterface
 
     )
     {
-        $this->ErpManager = new ErpManager($httpClient);
         $this->isOnlineMigvan = $_ENV['IS_ONLINE_MIGVAN'] === "true";
         $this->isUsedMigvan = $_ENV['IS_USED_MIGVAN'] === "true";
     }

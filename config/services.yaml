@@ -39,3 +39,87 @@ services:
         autowire: true
         arguments:
             $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetUsers:
+        autowire: true
+        arguments:
+            $repository: '@App\Entity\User'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetProducts:
+        autowire: true
+        arguments:
+            $categoryRepository: '@App\Entity\Category'
+            $productRepository: '@App\Entity\Product'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetCategories:
+        autowire: true
+        arguments:
+            $categoryRepository: '@App\Entity\Category'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetPriceList:
+        autowire: true
+        arguments:
+            $priceListRepository: '@App\Entity\PriceList'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetPriceListDetailed:
+        autowire: true
+        arguments:
+            $productRepository: '@App\Entity\Product'
+            $priceListRepository: '@App\Repository\PriceListRepository'
+            $priceListDetailedRepository: '@App\Repository\PriceListDetailedRepository'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetPriceListUser:
+        autowire: true
+        arguments:
+            $userRepository: '@App\Entity\User'
+            $priceListRepository: '@App\Repository\PriceListRepository'
+            $priceListUserRepository: '@App\Repository\PriceListDetailedRepository'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetStocks:
+        autowire: true
+        arguments:
+            $productRepository: '@App\Repository\Product'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetMainAttributes:
+        autowire: true
+        arguments:
+            $attributeMainRepository: '@App\Repository\AttributeMainRepository'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetSubAttributes:
+        autowire: true
+        arguments:
+            $subAttributeRepository: '@App\Repository\SubAttributeRepository'
+            $productRepository: '@App\Repository\ProductRepository'
+            $attributeMainRepository: '@App\Repository\AttributeMainRepository'
+            $productAttributeRepository: '@App\Repository\ProductAttributeRepository'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetMigvans:
+        autowire: true
+        arguments:
+            $migvanRepository: '@App\Repository\MigvanRepository'
+            $userRepository: '@App\Repository\UserRepository'
+            $productRepository: '@App\Repository\ProductRepository'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetPacks:
+        autowire: true
+        arguments:
+            $packMainRepository: '@App\Repository\PackMainRepository'
+            $erpManager: '@App\Erp\Core\ErpManager'
+
+    App\Erp\Cron\GetProductPacks:
+        autowire: true
+        arguments:
+            $packMainRepository: '@App\Repository\PackMainRepository'
+            $packProductsRepository: '@App\Repository\PackProductsRepository'
+            $productRepository: '@App\Repository\ProductRepository'
+            $erpManager: '@App\Erp\Core\ErpManager'

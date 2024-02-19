@@ -2,34 +2,29 @@
 
 namespace App\Cron\Core;
 
-use App\Entity\Error;
 use App\Entity\ProductAttribute;
 use App\Entity\SubAttribute;
 use App\Erp\Core\ErpManager;
 use App\Repository\AttributeMainRepository;
-use App\Repository\ErrorRepository;
 use App\Repository\ProductAttributeRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SubAttributeRepository;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class GetSubAttributes
 {
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
         private readonly SubAttributeRepository $subAttributeRepository,
         private readonly ProductRepository $productRepository,
         private readonly AttributeMainRepository $attributeMainRepository,
-        private readonly ErrorRepository $errorRepository,
         private readonly ProductAttributeRepository $productAttributeRepository,
+        private readonly ErpManager $erpManager,
     )
     {}
 
     public function sync()
     {
 
-        // try {
-        $response = (new ErpManager($this->httpClient))->GetProducts();
+        $response = $this->erpManager->GetProducts();
         foreach ($response->products as $itemRec) {
             if($itemRec->status) {
 
@@ -59,12 +54,6 @@ class GetSubAttributes
             }
 
         }
-        // } catch (\Exception $e) {
-        //     $error = new Error();
-        //     $error->setFunctionName('cron get sub attributes');
-        //     $error->setDescription($e->getMessage());
-        //     $this->errorRepository->createError($error, true);
-        // }
 
     }
 }
