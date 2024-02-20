@@ -4,13 +4,8 @@ namespace App\Erp\Custom;
 
 use App\Erp\Core\ErpManager;
 
-class CustomMethods
+class CustomMethods extends ErpManager
 {
-    public function __construct(
-        private readonly ErpManager $erpManager,
-    )
-    {
-    }
 
     public function GetOnlineProdImages()
     {

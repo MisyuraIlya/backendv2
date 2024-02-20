@@ -27,7 +27,6 @@ class LoginResponseListener
         $token = $this->tokenStorage->getToken();
         if ($token) {
             $user = $token->getUser();
-            $parent = $this->userRepository->findParent($user->getExtId());
             assert($user instanceof User);
             if ($user instanceof UserInterface) {
                 if ($user->getIsBlocked()) {

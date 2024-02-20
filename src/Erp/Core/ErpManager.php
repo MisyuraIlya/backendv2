@@ -2,7 +2,6 @@
 
 namespace App\Erp\Core;
 
-use App\Entity\Error;
 use App\Entity\User;
 use App\Erp\Core\Dto\CartessetDto;
 use App\Erp\Core\Dto\CategoriesDto;

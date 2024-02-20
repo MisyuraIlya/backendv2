@@ -2,11 +2,9 @@
 
 namespace App\Cron\Core;
 
-use App\Entity\Error;
 use App\Entity\PriceListUser;
 use App\Entity\User;
 use App\Erp\Core\ErpManager;
-use App\Repository\ErrorRepository;
 use App\Repository\PriceListRepository;
 use App\Repository\PriceListUserRepository;
 use App\Repository\UserRepository;
