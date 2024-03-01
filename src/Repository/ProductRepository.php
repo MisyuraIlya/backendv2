@@ -72,7 +72,19 @@ class ProductRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function getCatalog(int $page = 1, string $userExtId = null, int $itemsPerPage = 24, string $identify, float $lvl2, float $lvl3, ?string $orderBy = null, ?string $attributes, ?string $searchValue, ?array $makatsRecommended, string $documentType): Paginator
+    public function getCatalog(
+        int $page = 1,
+        string $userExtId = null,
+        int $itemsPerPage = 24,
+        string $lvl1,
+        float $lvl2,
+        float $lvl3,
+        ?string $orderBy = null,
+        ?string $attributes,
+        ?string $searchValue,
+        ?array $makatsForSearch,
+        string $documentType
+    ): Paginator
     {
         $firstResult = ($page - 1) * $itemsPerPage;
         $queryBuilder = $this->_em->createQueryBuilder();
@@ -80,30 +92,24 @@ class ProductRepository extends ServiceEntityRepository
             ->from(Product::class, 'p')
             ->andWhere('p.isPublished = true');
 
-        if (!empty($makatsRecommended)) {
-            $queryBuilder->andWhere($queryBuilder->expr()->in('p.sku', $makatsRecommended));
+        if (!empty($makatsForSearch)) {
+            $queryBuilder->andWhere($queryBuilder->expr()->in('p.sku', $makatsForSearch));
         }
-        if($identify) {
-            $words = explode('_', $identify);
-            $upperCamelCase = '';
-            foreach ($words as $word) {
-                $upperCamelCase .= ucfirst($word);
-            }
 
-            $parameter = 'is' . $upperCamelCase;
-            $queryBuilder->andWhere("p.$parameter = 1");
+        if ($lvl1) {
+            $queryBuilder->andWhere('p.categoryLvl1 = :lvl1')
+                ->setParameter('lvl1', $lvl1);
 
             if ($lvl2) {
-                $queryBuilder->andWhere('p.extLvl2 = :lvl2')
+                $queryBuilder->andWhere('p.categoryLvl2 = :lvl2')
                     ->setParameter('lvl2', $lvl2);
 
                 if ($lvl3) {
-                    $queryBuilder->andWhere('p.extLvl3 = :lvl3')
+                    $queryBuilder->andWhere('p.categoryLvl3 = :lvl3')
                         ->setParameter('lvl3', $lvl3);
                 }
             }
         }
-
 
 
         if (!empty($attributes)) {

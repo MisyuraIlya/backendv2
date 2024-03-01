@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Elasticsearch\Filter\TermFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use App\Enum\CatalogDocumentTypeEnum;
 use App\Repository\ProductRepository;
 use App\State\ProductProvider;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -53,8 +54,9 @@ use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: '/catalog/{lvl1}/{lvl2}/{lvl3}',
+            uriTemplate: '/catalog/{documentType}/{lvl1}/{lvl2}/{lvl3}',
             uriVariables: [
+                'documentType' => new Link(fromClass: CatalogDocumentTypeEnum::class),
                 'lvl1' => new Link(fromClass: Category::class),
                 'lvl2' => new Link(fromClass: Category::class),
                 'lvl3' => new Link(fromClass: Category::class),

@@ -42,14 +42,17 @@ class ProductProvider implements ProviderInterface
     {
         $migvanOnline = null;
         $userExtId =  $this->requestStack->getCurrentRequest()->get('userExtId');
+
         if($userExtId && $userExtId!== 'null'){
             $userDb = $this->userRepository->findFirstExtId($userExtId);
         } else {
             $userDb = '';
         }
+
         if($this->isOnlineMigvan && $userExtId && $this->isUsedMigvan){
             $migvanOnline = $this->erpManager->GetMigvanOnline($userExtId)->migvans;
         }
+
         $data = $this->GetDbData($migvanOnline);
         assert($data instanceof Paginator);
 
@@ -85,7 +88,19 @@ class ProductProvider implements ProviderInterface
         $attributes =  $this->requestStack->getCurrentRequest()->get('attributes');
         $searchValue = $this->requestStack->getCurrentRequest()->get('search');
         $makatsForSearch = [];
-        $data = $this->productRepository->getCatalog($page, $userExtId, $itemsPerPage, $lvl1, $lvl2, $lvl3, $orderBy, $attributes,$searchValue, $makatsForSearch,$documentType);
+        $data = $this->productRepository->getCatalog(
+            $page,
+            $userExtId,
+            $itemsPerPage,
+            $lvl1,
+            $lvl2,
+            $lvl3,
+            $orderBy,
+            $attributes,
+            $searchValue,
+            $makatsForSearch,
+            $documentType
+        );
         $this->GetSkus($data);
         return $data;
     }

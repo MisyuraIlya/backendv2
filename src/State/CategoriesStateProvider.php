@@ -28,7 +28,7 @@ class CategoriesStateProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
-            $response = $this->categoryRepository->MediMarketCategories();
+            $response = $this->categoryRepository->GetAppCategories();
             return $response;
     }
 }
