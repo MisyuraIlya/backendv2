@@ -1,5 +1,2 @@
 vendor
 var
-public
-.env
-.env.test
