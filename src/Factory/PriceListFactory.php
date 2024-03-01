@@ -41,6 +41,15 @@ final class PriceListFactory extends ModelFactory
         parent::__construct();
     }
 
+    private function getJsonTitles(): array
+    {
+        $jsonContent = file_get_contents(__DIR__ . '/JSONS/PriceList.json');
+        $data = json_decode($jsonContent, true);
+        $titles = array_column($data, 'title');
+        return $titles;
+    }
+
+
     /**
      * @see https://symfony.com/bundles/ZenstruckFoundryBundle/current/index.html#model-factories
      *
@@ -48,9 +57,10 @@ final class PriceListFactory extends ModelFactory
      */
     protected function getDefaults(): array
     {
+        $titles = $this->getJsonTitles();
         return [
-            'extId' => self::faker()->numberBetween(1000, 1000000),
-            'title' => self::faker()->randomElement(self::TREASURE_NAMES),
+            'extId' => self::faker()->numberBetween(1000000, 9999999),
+            'title' => self::faker()->randomElement($titles),
             'discount' => self::faker()->numberBetween(0, 100),
         ];
     }

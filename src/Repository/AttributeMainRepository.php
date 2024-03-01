@@ -8,7 +8,7 @@ use App\Entity\Product;
 use App\Entity\ProductAttribute;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use App\Entity\SubAttribute;
+use App\Entity\AttributeSub;
 
 /**
  * @extends ServiceEntityRepository<AttributeMain>

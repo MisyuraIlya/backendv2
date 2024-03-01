@@ -69,7 +69,7 @@ class RestoreCartStateProvider implements ProviderInterface
         if($priceType == 'updatedPrice') {
             $userPriceLists = [];
             foreach ($user->getPriceListUsers() as $itemRec){
-                $userPriceLists[] = $itemRec->getPriceListId()->getExtId();
+                $userPriceLists[] = $itemRec->getPriceList()->getExtId();
             }
             if(!empty($userPriceLists)){
                 $prices = $this->erpManager->GetPricesOnline($skus,$userPriceLists,$user->getExtId());
@@ -147,7 +147,7 @@ class RestoreCartStateProvider implements ProviderInterface
         if($priceType == 'updatedPrice') {
             $priceLists = [];
             foreach ($user->getPriceListUsers() as $itemRec){
-                $priceLists[] = $itemRec->getPriceListId()->getExtId();
+                $priceLists[] = $itemRec->getPriceList()->getExtId();
             }
             if($priceLists){
                 $prices = $this->erpManager->GetPricesOnline($skus, $priceLists, $user->getExtId());

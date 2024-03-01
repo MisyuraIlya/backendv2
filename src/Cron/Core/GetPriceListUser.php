@@ -34,8 +34,8 @@ class GetPriceListUser
                         $priceListUser = $this->priceListUserRepository->findOneByUserIdAndPriceListId($userRec->getId(),$priceList->getId());
                         if(empty($priceListUser)){
                             $priceListUser = new PriceListUser();
-                            $priceListUser->setUserId($userRec);
-                            $priceListUser->setPriceListId($priceList);
+                            $priceListUser->setUser($userRec);
+                            $priceListUser->setPriceList($priceList);
                             $this->priceListUserRepository->save($priceListUser,true);
                         }
                     }

@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\User;
+use App\Enum\UsersTypes;
 use App\Repository\UserRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -47,16 +48,11 @@ final class UserFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
-            'priceList' => PriceListFactory::new(),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
-            'email' => self::faker()->email(),
-            'extId' => self::faker()->numberBetween(1000000, 2000000),
-            'isBlocked' => self::faker()->boolean(),
-            'isRegistered' => self::faker()->boolean(),
-            'password' => self::faker()->text(),
-            'roles' => [],
-            'name' => self::faker()->name(),
-            'phone' => self::faker()->phoneNumber(),
+            'isBlocked' => false,
+            'isRegistered' => false,
+            'password' => null,
+            'roles' => UsersTypes::USER,
             'updatedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];
     }

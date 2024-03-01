@@ -96,7 +96,7 @@ services:
     App\Cron\Core\GetSubAttributes:
         autowire: true
         arguments:
-            $subAttributeRepository: '@App\Repository\SubAttributeRepository'
+            $attributeSubRepository: '@App\Repository\AttributeSubRepository'
             $productRepository: '@App\Repository\ProductRepository'
             $attributeMainRepository: '@App\Repository\AttributeMainRepository'
             $productAttributeRepository: '@App\Repository\ProductAttributeRepository'
@@ -120,6 +120,6 @@ services:
         autowire: true
         arguments:
             $packMainRepository: '@App\Repository\PackMainRepository'
-            $packProductsRepository: '@App\Repository\PackProductsRepository'
+            $productPackRepository: '@App\Repository\ProductPackRepository'
             $productRepository: '@App\Repository\ProductRepository'
             $erpManager: '@App\Erp\Core\ErpManager'

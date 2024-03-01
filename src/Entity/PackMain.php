@@ -33,7 +33,7 @@ class PackMain
     #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
     private ?string $barcode = null;
 
-    #[ORM\OneToMany(mappedBy: 'pack', targetEntity: PackProducts::class)]
+    #[ORM\OneToMany(mappedBy: 'pack', targetEntity: ProductPack::class)]
     private Collection $packProducts;
 
     public function __construct()
@@ -95,14 +95,14 @@ class PackMain
     }
 
     /**
-     * @return Collection<int, PackProducts>
+     * @return Collection<int, ProductPack>
      */
     public function getPackProducts(): Collection
     {
         return $this->packProducts;
     }
 
-    public function addPackProduct(PackProducts $packProduct): static
+    public function addPackProduct(ProductPack $packProduct): static
     {
         if (!$this->packProducts->contains($packProduct)) {
             $this->packProducts->add($packProduct);
@@ -112,7 +112,7 @@ class PackMain
         return $this;
     }
 
-    public function removePackProduct(PackProducts $packProduct): static
+    public function removePackProduct(ProductPack $packProduct): static
     {
         if ($this->packProducts->removeElement($packProduct)) {
             // set the owning side to null (unless already changed)

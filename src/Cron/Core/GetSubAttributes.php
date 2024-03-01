@@ -3,21 +3,21 @@
 namespace App\Cron\Core;
 
 use App\Entity\ProductAttribute;
-use App\Entity\SubAttribute;
+use App\Entity\AttributeSub;
 use App\Erp\Core\ErpManager;
 use App\Repository\AttributeMainRepository;
 use App\Repository\ProductAttributeRepository;
 use App\Repository\ProductRepository;
-use App\Repository\SubAttributeRepository;
+use App\Repository\AttributeSubRepository;
 
 class GetSubAttributes
 {
     public function __construct(
-        private readonly SubAttributeRepository $subAttributeRepository,
-        private readonly ProductRepository $productRepository,
-        private readonly AttributeMainRepository $attributeMainRepository,
+        private readonly AttributeSubRepository     $attributeSubRepository,
+        private readonly ProductRepository          $productRepository,
+        private readonly AttributeMainRepository    $attributeMainRepository,
         private readonly ProductAttributeRepository $productAttributeRepository,
-        private readonly ErpManager $erpManager,
+        private readonly ErpManager                 $erpManager,
     )
     {}
 
@@ -29,12 +29,12 @@ class GetSubAttributes
             if($itemRec->status) {
 
                 $attributeMain = $this->attributeMainRepository->findOneByExtId(999);
-                $subAttribute = $this->subAttributeRepository->findOneByTitle($itemRec->Extra3);
+                $subAttribute = $this->attributeSubRepository->findOneByTitle($itemRec->Extra3);
                 if(empty($subAttribute) && $itemRec->Extra3){
-                    $newSubAt = new SubAttribute();
+                    $newSubAt = new AttributeSub();
                     $newSubAt->setTitle($itemRec->Extra3);
                     $newSubAt->setAttribute($attributeMain);
-                    $this->subAttributeRepository->createSubAttribute($newSubAt,true);
+                    $this->attributeSubRepository->createSubAttribute($newSubAt,true);
                 }
 
                 $product = $this->productRepository->findOneBySku($itemRec->sku);

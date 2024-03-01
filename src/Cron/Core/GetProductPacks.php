@@ -2,19 +2,19 @@
 
 namespace App\Cron\Core;
 
-use App\Entity\PackProducts;
+use App\Entity\ProductPack;
 use App\Erp\Core\ErpManager;
 use App\Repository\PackMainRepository;
-use App\Repository\PackProductsRepository;
+use App\Repository\ProductPackRepository;
 use App\Repository\ProductRepository;
 
 class GetProductPacks
 {
     public function __construct(
-        private readonly PackMainRepository $packMainRepository,
-        private readonly PackProductsRepository $packProductsRepository,
-        private readonly ProductRepository $productRepository,
-        private readonly ErpManager $erpManager,
+        private readonly PackMainRepository    $packMainRepository,
+        private readonly ProductPackRepository $productPackRepository,
+        private readonly ProductRepository     $productRepository,
+        private readonly ErpManager            $erpManager,
     )
     {
     }
@@ -27,12 +27,12 @@ class GetProductPacks
             $findProduct = $this->productRepository->findOneBySku($itemRec->sku);
             $findMainPack = $this->packMainRepository->findOneByExtIdAndQuantity($itemRec->packExtId, $itemRec->quantity);
             if(!empty($findMainPack) && !empty($findProduct)) {
-                $PackProd = $this->packProductsRepository->findOneByProductIdAndPackId($findProduct->getId(), $findMainPack->getId());
+                $PackProd = $this->productPackRepository->findOneByProductIdAndPackId($findProduct->getId(), $findMainPack->getId());
                 if(empty($PackProd)){
-                    $PackProd = new PackProducts();
+                    $PackProd = new ProductPack();
                     $PackProd->setPack($findMainPack);
                     $PackProd->setProduct($findProduct);
-                    $this->packProductsRepository->save($PackProd,true);
+                    $this->productPackRepository->save($PackProd,true);
                 }
             }
         }

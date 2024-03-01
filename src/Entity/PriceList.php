@@ -122,7 +122,7 @@ class PriceList
     {
         if (!$this->priceListUsers->contains($priceListUser)) {
             $this->priceListUsers->add($priceListUser);
-            $priceListUser->setPriceListId($this);
+            $priceListUser->setPriceList($this);
         }
 
         return $this;
@@ -132,8 +132,8 @@ class PriceList
     {
         if ($this->priceListUsers->removeElement($priceListUser)) {
             // set the owning side to null (unless already changed)
-            if ($priceListUser->getPriceListId() === $this) {
-                $priceListUser->setPriceListId(null);
+            if ($priceListUser->getPriceList() === $this) {
+                $priceListUser->setPriceList(null);
             }
         }
 

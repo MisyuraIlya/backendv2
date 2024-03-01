@@ -3,6 +3,8 @@
 namespace App\Factory;
 
 use App\Entity\History;
+use App\Enum\DocumentTypeHistory;
+use App\Enum\PurchaseStatus;
 use App\Repository\HistoryRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
@@ -46,7 +48,21 @@ final class HistoryFactory extends ModelFactory
      */
     protected function getDefaults(): array
     {
+        $purchaseStatusValues = (new \ReflectionClass(PurchaseStatus::class))->getConstants();
+        $documentType = (new \ReflectionClass(DocumentTypeHistory::class))->getConstants();
         return [
+            'user' => UserFactory::new(),
+            'orderExtId' =>  self::faker()->numberBetween(100000, 999999),
+            'deliveryDate' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'deliveryPrice' => self::faker()->numberBetween(100, 1000),
+            'isBuyByCreditCard' => self::faker()->boolean(),
+            'isSendErp' => self::faker()->boolean(),
+            'sendErpAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
+            'discount' => self::faker()->numberBetween(0, 100),
+            'total' => self::faker()->numberBetween(0, 100000),
+            'orderComment' => self::faker()->text(255),
+            'documentType' => self::faker()->randomElement($documentType),
+            'orderStatus' => self::faker()->randomElement($purchaseStatusValues),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'updatedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
         ];

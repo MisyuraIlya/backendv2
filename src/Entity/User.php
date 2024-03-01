@@ -63,7 +63,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
     private ?string $phone = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read'])]
     private ?string $extId = null;
 
@@ -106,12 +106,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $passwordUnencrypted = null;
 
     #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
-    #[ORM\Column]
-    private ?bool $isAllowOrder = null;
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private ?bool $isAllowOrder = false;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
-    #[ORM\Column]
-    private ?bool $isAllowAllClients = null;
+
+    #[Groups(['user:read', 'agentTarget:read', 'agentObjective:read'])]
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private ?bool $isAllowAllClients = false;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PriceListUser::class)]
     private Collection $priceListUsers;
@@ -337,7 +338,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->histories->contains($history)) {
             $this->histories->add($history);
-            $history->setUserId($this);
+            $history->setUser($this);
         }
 
         return $this;
@@ -347,8 +348,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->histories->removeElement($history)) {
             // set the owning side to null (unless already changed)
-            if ($history->getUserId() === $this) {
-                $history->setUserId(null);
+            if ($history->getUser() === $this) {
+                $history->setUser(null);
             }
         }
 
@@ -367,7 +368,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->migvans->contains($migvan)) {
             $this->migvans->add($migvan);
-            $migvan->setUserId($this);
+            $migvan->setUser($this);
         }
 
         return $this;
@@ -377,8 +378,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->migvans->removeElement($migvan)) {
             // set the owning side to null (unless already changed)
-            if ($migvan->getUserId() === $this) {
-                $migvan->setUserId(null);
+            if ($migvan->getUser() === $this) {
+                $migvan->setUser(null);
             }
         }
 
@@ -536,7 +537,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->priceListUsers->contains($priceListUser)) {
             $this->priceListUsers->add($priceListUser);
-            $priceListUser->setUserId($this);
+            $priceListUser->setUser($this);
         }
 
         return $this;
@@ -546,8 +547,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->priceListUsers->removeElement($priceListUser)) {
             // set the owning side to null (unless already changed)
-            if ($priceListUser->getUserId() === $this) {
-                $priceListUser->setUserId(null);
+            if ($priceListUser->getUser() === $this) {
+                $priceListUser->setUser(null);
             }
         }
 

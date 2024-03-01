@@ -5,9 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
-use App\Enum\CatalogDocumentTypeEnum;
 use App\Repository\CategoryRepository;
-use App\State\CategoriesDynamicProvider;
 use App\State\CategoriesStateProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -33,15 +31,6 @@ use ApiPlatform\Metadata\Link;
         new GetCollection(
             uriTemplate: '/categoriesApp',
             provider: CategoriesStateProvider::class
-        ),
-        new GetCollection(
-            uriTemplate: '/categoriesAppDynamic/{lvl1}/{lvl2}/{lvl3}',
-            uriVariables: [
-                'lvl1' => new Link(fromClass: Category::class),
-                'lvl2' => new Link(fromClass: Category::class),
-                'lvl3' => new Link(fromClass: Category::class),
-            ],
-            provider: CategoriesDynamicProvider::class,
         )
     ],
     normalizationContext: ['groups' => ['category:read']],
@@ -95,19 +84,18 @@ class Category
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     private Collection $categories;
 
+    #[ORM\OneToMany(mappedBy: "categoryLvl1", targetEntity: Product::class)]
+    private Collection $productsLvl1;
 
+    #[ORM\OneToMany(mappedBy: "categoryLvl2", targetEntity: Product::class)]
+    private Collection $productsLvl2;
+
+    #[ORM\OneToMany(mappedBy: "categoryLvl3", targetEntity: Product::class)]
+    private Collection $productsLvl3;
 
     #[Groups(['category:read','category:write'])]
     #[ORM\ManyToOne(inversedBy: 'categories')]
     private ?MediaObject $MediaObject = null;
-
-    #[ORM\Column(length: 255)]
-    #[Groups(['category:read'])]
-    private ?string $identify = null;
-
-    #[Groups(['category:read'])]
-    #[ORM\Column]
-    private ?bool $isBlockedForView = null;
 
     public function __construct()
     {
@@ -214,6 +202,7 @@ class Category
         return $this->categories;
     }
 
+
     //CUSTOM FUNCTION
     public function setCategories(array $newCategories): static
     {
@@ -227,6 +216,57 @@ class Category
 
         return $this;
     }
+
+
+    /**
+     * @return Collection
+     */
+    public function getProductsLvl1(): Collection
+    {
+        return $this->productsLvl1;
+    }
+
+    /**
+     * @param Collection $productsLvl1
+     */
+    public function setProductsLvl1(Collection $productsLvl1): void
+    {
+        $this->productsLvl1 = $productsLvl1;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getProductsLvl2(): Collection
+    {
+        return $this->productsLvl2;
+    }
+
+    /**
+     * @param Collection $productsLvl2
+     */
+    public function setProductsLvl2(Collection $productsLvl2): void
+    {
+        $this->productsLvl2 = $productsLvl2;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getProductsLvl3(): Collection
+    {
+        return $this->productsLvl3;
+    }
+
+    /**
+     * @param Collection $productsLvl3
+     */
+    public function setProductsLvl3(Collection $productsLvl3): void
+    {
+        $this->productsLvl3 = $productsLvl3;
+    }
+
+
 
     public function addCategory(self $category): static
     {
@@ -258,30 +298,6 @@ class Category
     public function setMediaObject(?MediaObject $MediaObject): static
     {
         $this->MediaObject = $MediaObject;
-
-        return $this;
-    }
-
-    public function getIdentify(): ?string
-    {
-        return $this->identify;
-    }
-
-    public function setIdentify(string $identify): static
-    {
-        $this->identify = $identify;
-
-        return $this;
-    }
-
-    public function isIsBlockedForView(): ?bool
-    {
-        return $this->isBlockedForView;
-    }
-
-    public function setIsBlockedForView(bool $isBlockedForView): static
-    {
-        $this->isBlockedForView = $isBlockedForView;
 
         return $this;
     }

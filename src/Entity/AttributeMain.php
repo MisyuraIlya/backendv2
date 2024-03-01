@@ -47,27 +47,27 @@ class AttributeMain
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $extId = null;
 
-    #[Groups(['category:read','SubAttribute:read','attribute:write','attribute:read'])]
+    #[Groups(['category:read','AttributeSub:read','attribute:write','attribute:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
     #[ORM\Column]
     private ?bool $isPublished = null;
 
-    #[Groups(['category:read','SubAttribute:read','attribute:write','attribute:read'])]
+    #[Groups(['category:read','AttributeSub:read','attribute:write','attribute:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $orden = null;
 
-    #[Groups(['product:read','category:read','SubAttribute:read','attribute:write','attribute:read'])]
+    #[Groups(['product:read','category:read','AttributeSub:read','attribute:write','attribute:read'])]
     #[ORM\Column]
     private ?bool $isInProductCard = null;
 
-    #[Groups(['category:read','SubAttribute:read','attribute:write','attribute:read'])]
+    #[Groups(['category:read','AttributeSub:read','attribute:write','attribute:read'])]
     #[ORM\Column]
     private ?bool $isInFilter = null;
 
-    #[Groups(['category:read','SubAttribute:read','attribute:write','attribute:read'])]
-    #[ORM\OneToMany(mappedBy: 'attribute', targetEntity: SubAttribute::class)]
+    #[Groups(['category:read','AttributeSub:read','attribute:write','attribute:read'])]
+    #[ORM\OneToMany(mappedBy: 'attribute', targetEntity: AttributeSub::class)]
     private Collection $SubAttributes;
 
     public function __construct()
@@ -154,14 +154,14 @@ class AttributeMain
     }
 
     /**
-     * @return Collection<int, SubAttribute>
+     * @return Collection<int, AttributeSub>
      */
     public function getSubAttributes(): Collection
     {
         return $this->SubAttributes;
     }
 
-    public function addSubAttribute(SubAttribute $SubAttribute): static
+    public function addSubAttribute(AttributeSub $SubAttribute): static
     {
         if (!$this->SubAttributes->contains($SubAttribute)) {
             $this->SubAttributes->add($SubAttribute);
@@ -171,7 +171,7 @@ class AttributeMain
         return $this;
     }
 
-    public function removeSubAttribute(SubAttribute $SubAttribute): static
+    public function removeSubAttribute(AttributeSub $SubAttribute): static
     {
         if ($this->SubAttributes->removeElement($SubAttribute)) {
             // set the owning side to null (unless already changed)

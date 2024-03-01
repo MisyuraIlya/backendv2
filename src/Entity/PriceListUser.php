@@ -27,24 +27,24 @@ class PriceListUser
         return $this->id;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
         return $this->user;
     }
 
-    public function setUserId(?User $userId): static
+    public function setUser(?User $user): static
     {
-        $this->user = $userId;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getPriceListId(): ?PriceList
+    public function getPriceList(): ?PriceList
     {
         return $this->priceList;
     }
 
-    public function setPriceListId(?PriceList $priceListId): static
+    public function setPriceList(?PriceList $priceListId): static
     {
         $this->priceList = $priceListId;
 

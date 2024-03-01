@@ -112,7 +112,7 @@ class DocumentsProvider implements ProviderInterface
     private function handleUserPriceLists()
     {
         foreach ($this->userDb->getPriceListUsers() as $itemRec){
-            $this->userPriceLists[] = $itemRec->getPriceListId()->getExtId();
+            $this->userPriceLists[] = $itemRec->getPriceList()->getExtId();
         }
     }
 

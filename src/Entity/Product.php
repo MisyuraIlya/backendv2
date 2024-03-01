@@ -5,12 +5,10 @@ namespace App\Entity;
 use ApiPlatform\Elasticsearch\Filter\TermFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
-use App\Enum\CatalogDocumentTypeEnum;
 use App\Repository\ProductRepository;
 use App\State\ProductProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 use ApiPlatform\Metadata\Get;
@@ -55,9 +53,8 @@ use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 #[ApiResource(
     operations: [
         new GetCollection(
-            uriTemplate: '/catalog/{documentType}/{lvl1}/{lvl2}/{lvl3}',
+            uriTemplate: '/catalog/{lvl1}/{lvl2}/{lvl3}',
             uriVariables: [
-                'documentType' => new Link(fromClass: CatalogDocumentTypeEnum::class),
                 'lvl1' => new Link(fromClass: Category::class),
                 'lvl2' => new Link(fromClass: Category::class),
                 'lvl3' => new Link(fromClass: Category::class),
@@ -94,7 +91,7 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $defaultImagePath = null;
 
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','restoreCart:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
@@ -102,13 +99,20 @@ class Product
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $barcode = null;
 
-    #[Groups(['product:read','category:read','product:write','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','product:write','restoreCart:read'])]
     #[ORM\Column]
     private ?bool $isPublished = null;
 
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "productsLvl1")]
+    private ?Category $categoryLvl1 = null;
 
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "productsLvl2")]
+    private ?Category $categoryLvl2 = null;
 
-    #[Groups(['product:read','category:read','productImages:read','restoreCart:read','history:read'])]
+    #[ORM\ManyToOne(targetEntity: Category::class, inversedBy: "productsLvl3")]
+    private ?Category $categoryLvl3 = null;
+
+    #[Groups(['product:read','category:read','productImages:read','restoreCart:read'])]
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductImages::class)]
     private Collection $imagePath;
 
@@ -120,89 +124,44 @@ class Product
     private Collection $priceListDetaileds;
 
 
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','restoreCart:read'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','restoreCart:read'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','restoreCart:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $basePrice = null;
 
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','restoreCart:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $finalPrice = 0;
 
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','restoreCart:read'])]
     #[ORM\Column]
     private ?int $stock = 0;
 
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','restoreCart:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $packQuantity = null;
 
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[Groups(['product:read','category:read','restoreCart:read'])]
     #[ORM\Column(nullable: true)]
     private ?int $discount = 0;
 
-    #[Groups(['product:read','category:read','product:write','history:read'])]
-    #[ORM\Column]
+    #[Groups(['product:read','category:read','product:write'])]
+    #[ORM\Column(nullable: true)]
     private ?int $orden = null;
 
-    #[Groups(['product:read','category:read','history:read'])]
+    #[Groups(['product:read','category:read'])]
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductAttribute::class)]
     private Collection $productAttributes;
 
-    #[ORM\OneToMany(mappedBy: 'product', targetEntity: PackProducts::class)]
-    #[Groups(['product:read','category:read','restoreCart:read','history:read'])]
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductPack::class)]
     private Collection $packProducts;
-
-
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $extLvl2 = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $extLvl3 = null;
-
-    #[ORM\Column]
-    #[Groups(['product:read','category:read','product:write','restoreCart:read','history:read'])]
-    private ?bool $isHumane = null;
-
-    #[ORM\Column]
-    #[Groups(['product:read','category:read','product:write','restoreCart:read','history:read'])]
-    private ?bool $isVeterinary = null;
-
-    #[ORM\Column]
-    #[Groups(['product:read','category:read','product:write','restoreCart:read','history:read'])]
-    private ?bool $isPharmecies = null;
-
-    #[ORM\Column]
-    #[Groups(['product:read','category:read','product:write','restoreCart:read','history:read'])]
-    private ?bool $isMedicalCenter = null;
-
-    #[ORM\Column]
-    #[Groups(['product:read','category:read','product:write','restoreCart:read','history:read'])]
-    private ?bool $isHospital = null;
-
-    #[ORM\Column]
-    #[Groups(['product:read','category:read','product:write','restoreCart:read','history:read'])]
-    private ?bool $isDrugNotInBasket = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['product:read','category:read','historyDetailed:read','history:read','restoreCart:read'])]
-    private ?string $link = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['product:read','category:read','historyDetailed:read','history:read','restoreCart:read'])]
-    private ?string $linkTitle = null;
-
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $innerHtml = null;
-
 
     public function __construct()
     {
@@ -278,9 +237,41 @@ class Product
         return $this;
     }
 
+    public function getCategoryLvl1(): ?category
+    {
+        return $this->categoryLvl1;
+    }
 
+    public function setCategoryLvl1(?category $categoryLvl1): static
+    {
+        $this->categoryLvl1 = $categoryLvl1;
 
+        return $this;
+    }
 
+    public function getCategoryLvl2(): ?category
+    {
+        return $this->categoryLvl2;
+    }
+
+    public function setCategoryLvl2(?category $categoryLvl2): static
+    {
+        $this->categoryLvl2 = $categoryLvl2;
+
+        return $this;
+    }
+
+    public function getCategoryLvl3(): ?category
+    {
+        return $this->categoryLvl3;
+    }
+
+    public function setCategoryLvl3(?category $categoryLvl3): static
+    {
+        $this->categoryLvl3 = $categoryLvl3;
+
+        return $this;
+    }
 
     /**
      * @return Collection<int, ProductImages>
@@ -511,14 +502,14 @@ class Product
     }
 
     /**
-     * @return Collection<int, PackProducts>
+     * @return Collection<int, ProductPack>
      */
     public function getPackProducts(): Collection
     {
         return $this->packProducts;
     }
 
-    public function addPackProduct(PackProducts $packProduct): static
+    public function addPackProduct(ProductPack $packProduct): static
     {
         if (!$this->packProducts->contains($packProduct)) {
             $this->packProducts->add($packProduct);
@@ -528,146 +519,13 @@ class Product
         return $this;
     }
 
-    public function removePackProduct(PackProducts $packProduct): static
+    public function removePackProduct(ProductPack $packProduct): static
     {
         if ($this->packProducts->removeElement($packProduct)) {
-            // set the owning side to null (unless already changed)
             if ($packProduct->getProduct() === $this) {
                 $packProduct->setProduct(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getExtLvl2(): ?string
-    {
-        return $this->extLvl2;
-    }
-
-    public function setExtLvl2(?string $extLvl2): static
-    {
-        $this->extLvl2 = $extLvl2;
-
-        return $this;
-    }
-
-    public function getExtLvl3(): ?string
-    {
-        return $this->extLvl3;
-    }
-
-    public function setExtLvl3(?string $extLvl3): static
-    {
-        $this->extLvl3 = $extLvl3;
-
-        return $this;
-    }
-
-    public function isIsHumane(): ?bool
-    {
-        return $this->isHumane;
-    }
-
-    public function setIsHumane(bool $isHumane): static
-    {
-        $this->isHumane = $isHumane;
-
-        return $this;
-    }
-
-    public function isIsVeterinary(): ?bool
-    {
-        return $this->isVeterinary;
-    }
-
-    public function setIsVeterinary(bool $isVeterinary): static
-    {
-        $this->isVeterinary = $isVeterinary;
-
-        return $this;
-    }
-
-    public function isIsPharmecies(): ?bool
-    {
-        return $this->isPharmecies;
-    }
-
-    public function setIsPharmecies(bool $isPharmecies): static
-    {
-        $this->isPharmecies = $isPharmecies;
-
-        return $this;
-    }
-
-    public function isIsMedicalCenter(): ?bool
-    {
-        return $this->isMedicalCenter;
-    }
-
-    public function setIsMedicalCenter(bool $isMedicalCenter): static
-    {
-        $this->isMedicalCenter = $isMedicalCenter;
-
-        return $this;
-    }
-
-    public function isIsHospital(): ?bool
-    {
-        return $this->isHospital;
-    }
-
-    public function setIsHospital(bool $isHospital): static
-    {
-        $this->isHospital = $isHospital;
-
-        return $this;
-    }
-
-    public function isIsDrugNotInBasket(): ?bool
-    {
-        return $this->isDrugNotInBasket;
-    }
-
-    public function setIsDrugNotInBasket(bool $isDrugNotInBasket): static
-    {
-        $this->isDrugNotInBasket = $isDrugNotInBasket;
-
-        return $this;
-    }
-
-    public function getLink(): ?string
-    {
-        return $this->link;
-    }
-
-    public function setLink(?string $link): static
-    {
-        $this->link = $link;
-
-        return $this;
-    }
-
-    public function getLinkTitle(): ?string
-    {
-        return $this->linkTitle;
-    }
-
-    public function setLinkTitle(?string $linkTitle): static
-    {
-        $this->linkTitle = $linkTitle;
-
-        return $this;
-    }
-
-    public function getInnerHtml(): ?string
-    {
-        return $this->innerHtml;
-    }
-
-    public function setInnerHtml(?string $innerHtml): static
-    {
-        $this->innerHtml = $innerHtml;
 
         return $this;
     }

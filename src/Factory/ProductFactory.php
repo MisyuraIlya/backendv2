@@ -45,21 +45,44 @@ final class ProductFactory extends ModelFactory
      *
      * @todo add your default values here
      */
+
+    /**
+     * Read JSON file and return titles as an array
+     *
+     * @return array
+     */
+    private function getJsonTitles(): array
+    {
+        $jsonContent = file_get_contents(__DIR__ . '/JSONS/Product.json');
+        $data = json_decode($jsonContent, true);
+
+        $titles = array_column($data, 'title');
+        return $titles;
+    }
     protected function getDefaults(): array
     {
+        $titles = $this->getJsonTitles();
+        $randomCategoryLvl1 = CategoryFactory::repository()->findBy(['lvlNumber' => 1]);
+        $randomCategoryLvl1 = self::faker()->randomElement($randomCategoryLvl1);
+        $randomCategoryLvl2 = CategoryFactory::repository()->findBy(['lvlNumber' => 2, 'parent' => $randomCategoryLvl1]);
+        $randomCategoryLvl2 = self::faker()->randomElement($randomCategoryLvl2);
+
+        $randomCategoryLvl3 = CategoryFactory::repository()->findBy(['lvlNumber' => 3, 'parent' => $randomCategoryLvl2]);
+        $randomCategoryLvl3 = self::faker()->randomElement($randomCategoryLvl3);
+
         return [
             'isPublished' => self::faker()->boolean(),
             'sku' =>self::faker()->numberBetween(1000, 1000000),
-            'title' => self::faker()->randomElement(self::TREASURE_NAMES),
+            'title' => self::faker()->randomElement($titles),
             'description' => self::faker()->text(255),
             'basePrice' => self::faker()->numberBetween(1, 3000),
             'packQuantity' => self::faker()->numberBetween(1, 12),
             'barcode' => self::faker()->numberBetween(1000, 1000000),
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-2 year')),
             'updatedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTimeBetween('-1 year')), // Added '=>' here
-            'categoryLvl1' => CategoryFactory::new(),
-            'categoryLvl2' => CategoryFactory::new(),
-            'categoryLvl3' => CategoryFactory::new(),
+            'categoryLvl1' => $randomCategoryLvl1,
+            'categoryLvl2' => $randomCategoryLvl2,
+            'categoryLvl3' => $randomCategoryLvl3,
             'stock' => 0,
         ];
     }

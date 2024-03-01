@@ -97,7 +97,7 @@ class ProductProvider implements ProviderInterface
         $prices = $userDb->getPriceListUsers();
         $priceListsArr = [];
         foreach ($prices as $itemRec){
-            $priceListsArr[] =  $itemRec->getPriceListId()->getExtId();
+            $priceListsArr[] =  $itemRec->getPriceList()->getExtId();
         }
         //IF THERE NO PRICE LIST GO TO DB BASE PRICE
         if(!empty($priceListsArr) && $userExtId){

@@ -19,7 +19,7 @@ class ProductAttribute
 
     #[Groups(['product:read','category:read'])]
     #[ORM\ManyToOne(inversedBy: 'productAttributes')]
-    private ?SubAttribute $attributeSub = null;
+    private ?AttributeSub $attributeSub = null;
 
     public function getId(): ?int
     {
@@ -38,12 +38,12 @@ class ProductAttribute
         return $this;
     }
 
-    public function getAttributeSub(): ?SubAttribute
+    public function getAttributeSub(): ?AttributeSub
     {
         return $this->attributeSub;
     }
 
-    public function setAttributeSub(?SubAttribute $attributeSub): static
+    public function setAttributeSub(?AttributeSub $attributeSub): static
     {
         $this->attributeSub = $attributeSub;
 

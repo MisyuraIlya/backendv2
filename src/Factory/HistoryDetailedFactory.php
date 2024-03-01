@@ -47,6 +47,12 @@ final class HistoryDetailedFactory extends ModelFactory
     protected function getDefaults(): array
     {
         return [
+            'product' => ProductFactory::new(),
+            'history' => HistoryFactory::new(),
+            'singlePrice' => self::faker()->numberBetween(10, 1000),
+            'quantity' => self::faker()->numberBetween(1, 100),
+            'discount' => self::faker()->numberBetween(0, 100),
+            'total' => self::faker()->numberBetween(100, 10000),
         ];
     }
 
