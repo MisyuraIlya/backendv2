@@ -5,12 +5,16 @@ namespace App\Enum;
 enum DocumentsType: string
 {
     case ALL = 'הכל';
-    case ORDERS = 'הזמנות';
-    case PRICE_OFFER = 'הצעות מחיר';
+    case ORDERS = 'הזמנה';
+    case PRICE_OFFER = 'הצעת מחיר';
     case DELIVERY_ORDER = 'תעודות משלוח';
     case AI_INVOICE = 'חשבוניות מס';
     case CI_INVOICE = 'חשבוניות מס מרכזות';
     case RETURN_ORDERS = 'החזרות';
+
+    case HISTORY = 'היסטוריה';
+
+    case DRAFT = 'טיוטה';
 
     public static function getAllDetails(): array
     {

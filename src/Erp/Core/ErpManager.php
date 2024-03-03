@@ -3,6 +3,7 @@
 namespace App\Erp\Core;
 
 use App\Entity\User;
+use App\Enum\DocumentsType;
 use App\Erp\Core\Dto\CartessetDto;
 use App\Erp\Core\Dto\CategoriesDto;
 use App\Erp\Core\Dto\DocumentItemsDto;
@@ -79,7 +80,7 @@ class ErpManager implements ErpInterface
     {
         return $this->erp->GetMigvanOnline($userExtId);
     }
-    public function GetDocuments(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, string $documentType ,?int $limit = 10): DocumentsDto
+    public function GetDocuments(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentType ,?int $limit = 10): DocumentsDto
     {
 
         return $this->erp->GetDocuments($userExId, $dateFrom,$dateTo, $documentType, $limit);

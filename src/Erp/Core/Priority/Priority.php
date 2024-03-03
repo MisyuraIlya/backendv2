@@ -168,7 +168,7 @@ class Priority implements ErpInterface
         }
         return $result;
     }
-    public function GetDocuments(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, string $documentType , ?int $limit = 10): DocumentsDto
+    public function GetDocuments(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentsType , ?int $limit = 10): DocumentsDto
     {
         $order = [];
         $offers = [];
@@ -176,20 +176,19 @@ class Priority implements ErpInterface
         $aiInvoice = [];
         $ciInvoice = [];
         $returnDocs = [];
-        $enums = DocumentsType::getAllDetails();
-        if($enums['ORDERS']['ENGLISH'] === $documentType){
+        if($documentsType == DocumentsType::ORDERS){
             $order = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetOrders($userExId,$dateFrom, $dateTo);
-        } else if ($enums['PRICE_OFFER']['ENGLISH'] === $documentType) {
+        } else if ($documentsType == DocumentsType::PRICE_OFFER) {
             $offers = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetPriceOffer($userExId,$dateFrom, $dateTo);
-        } else if($enums['DELIVERY_ORDER']['ENGLISH'] === $documentType) {
+        } else if($documentsType == DocumentsType::DELIVERY_ORDER) {
             $documents = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetDeliveryOrder($userExId,$dateFrom, $dateTo);
-        } else if($enums['AI_INVOICE']['ENGLISH'] === $documentType) {
+        } else if($documentsType == DocumentsType::AI_INVOICE) {
             $aiInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetAiInvoice($userExId,$dateFrom, $dateTo);
-        } else if($enums['CI_INVOICE']['ENGLISH'] === $documentType) {
+        } else if($documentsType == DocumentsType::CI_INVOICE) {
             $ciInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetCiInvoice($userExId,$dateFrom, $dateTo);
-        } else if($enums['RETURN_ORDERS']['ENGLISH'] === $documentType) {
+        } else if($documentsType == DocumentsType::RETURN_ORDERS) {
             $returnDocs = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetReturnDocs($userExId,$dateFrom, $dateTo);
-        } else if($enums['ALL']['ENGLISH'] === $documentType) {
+        } else if($documentsType == DocumentsType::ALL) {
             $order = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetOrders($userExId,$dateFrom, $dateTo);
             $offers = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetPriceOffer($userExId,$dateFrom, $dateTo);
             $documents = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetDeliveryOrder($userExId,$dateFrom, $dateTo);

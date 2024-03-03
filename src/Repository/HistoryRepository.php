@@ -3,6 +3,8 @@
 namespace App\Repository;
 
 use App\Entity\History;
+use App\Enum\DocumentsType;
+use App\Enum\DocumentTypeHistory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,6 +41,36 @@ class HistoryRepository extends ServiceEntityRepository
             ->setParameter('val1', $id)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function historyHandler(\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, string $userId, int $page, ?DocumentsType $documentType = null)
+    {
+        $entityManager = $this->getEntityManager();
+        $queryBuilder = $entityManager->createQueryBuilder();
+        $queryBuilder
+            ->select('h')
+            ->from(History::class, 'h')
+            ->where('h.createdAt >= :dateFrom')
+            ->andWhere('h.createdAt <= :dateTo')
+            ->andWhere('h.user = :userId')
+            ->setMaxResults(10)
+            ->setFirstResult(($page - 1) * 10);
+
+        $parameters = [
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'userId' => $userId,
+        ];
+
+        if ($documentType !== null) {
+            $queryBuilder->andWhere('h.documentType = :documentType');
+            $parameters['documentType'] = $documentType;
+        }
+
+        $queryBuilder->setParameters($parameters);
+
+        $histories = $queryBuilder->getQuery()->getResult();
+        return $histories;
     }
 
 //    /**

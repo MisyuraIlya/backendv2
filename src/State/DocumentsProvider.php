@@ -7,7 +7,13 @@ use ApiPlatform\Metadata\Operation;
 use ApiPlatform\State\Pagination\Pagination;
 use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
+use App\Entity\History;
+use App\Enum\DocumentsType;
+use App\Enum\DocumentTypeHistory;
+use App\Erp\Core\Dto\DocumentDto;
+use App\Erp\Core\Dto\DocumentsDto;
 use App\Erp\Core\ErpManager;
+use App\Repository\HistoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -21,16 +27,22 @@ class DocumentsProvider implements ProviderInterface
         private readonly ProductRepository $productRepository,
         private readonly UserRepository $userRepository,
         private readonly ErpManager $erpManager,
+        private readonly HistoryRepository $historyRepository,
     )
     {
-        $this->userExId = $this->requestStack->getCurrentRequest()->query->get('userExId');
-        $this->fromDate = $this->requestStack->getCurrentRequest()->query->get('from');
-        $this->userDb = $this->userRepository->findFirstExtId($this->userExId);
-        $this->toDate = $this->requestStack->getCurrentRequest()->query->get('to');
-        $this->documentType = $this->requestStack->getCurrentRequest()->query->get('documentType');
-        $this->documentItemType = $this->requestStack->getCurrentRequest()->query->get('documentItemType');
+
+        $this->documentType = $this->requestStack->getCurrentRequest()->attributes->get('documentType');
+        $this->fromDate= $this->requestStack->getCurrentRequest()->attributes->get('dateFrom');
+        $this->toDate = $this->requestStack->getCurrentRequest()->attributes->get('dateTo');
+        $this->userId = $this->requestStack->getCurrentRequest()->query->get('userId');
+        $this->userDb = $this->userRepository->findOneById($this->userId);
         $this->limit = $this->requestStack->getCurrentRequest()->query->get('limit');
-        $this->handleUserPriceLists();
+
+
+//        $this->documentItemType = $this->requestStack->getCurrentRequest()->query->get('documentItemType');
+//        $this->handleUserPriceLists();
+
+
 
     }
 
@@ -39,11 +51,12 @@ class DocumentsProvider implements ProviderInterface
         if ($operation instanceof CollectionOperationInterface) {
             $currentPage = $this->pagination->getPage($context);
             $itemsPerPage = $this->pagination->getLimit($operation, $context);
+
             $offset = $this->pagination->getOffset($operation, $context);
             $result = $this->CollectionHandler($operation,$uriVariables,$context);
-            $totalItems = count($result->documents);
+            $totalItems = count($result);
             $start = ($currentPage - 1) * $itemsPerPage;
-            $slicedResult = array_slice($result->documents, $start, $itemsPerPage);
+            $slicedResult = array_slice($result, $start, $itemsPerPage);
             return new TraversablePaginator(
                 new \ArrayIterator($slicedResult),
                 $currentPage,
@@ -59,18 +72,28 @@ class DocumentsProvider implements ProviderInterface
         $format = "Y-m-d";
         $dateFrom = \DateTimeImmutable::createFromFormat($format, $this->fromDate);
         $dateTo = \DateTimeImmutable::createFromFormat($format, $this->toDate);
-
-        $response = $this->erpManager->GetDocuments(
-            $this->userExId,
-            $dateFrom,
-            $dateTo,
-            $this->documentType,
-            $this->limit
-        );
-//        $response->selectBox = DocumentsType::getAllDetails();
-
-        return $response;
-
+        $page = $this->pagination->getPage($context);
+        if($this->documentType == 'all') {
+            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::ALL, $this->limit)->documents;
+        } elseif($this->documentType == 'orders') {
+            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::ORDERS, $this->limit)->documents;
+        } elseif($this->documentType == 'priceOffer') {
+            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::PRICE_OFFER, $this->limit)->documents;
+        } elseif($this->documentType == 'deliveryOrder') {
+            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::DELIVERY_ORDER, $this->limit)->documents;
+        } elseif($this->documentType == 'aiInvoice') {
+            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::AI_INVOICE, $this->limit)->documents;
+        } elseif($this->documentType == 'ciInvoice') {
+            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::CI_INVOICE, $this->limit)->documents;
+        } elseif($this->documentType == 'returnOrder') {
+            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::RETURN_ORDERS, $this->limit)->documents;
+        } elseif($this->documentType == 'history') {
+            $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page);
+            return $this->ConvertHistoryToDocumentsDto($history)->documents;
+        } elseif($this->documentType == 'draft') {
+            $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page, DocumentsType::DRAFT);
+            return $this->ConvertHistoryToDocumentsDto($history)->documents;
+        }
     }
 
     private function GetHandler($operation,$uriVariables,$context)
@@ -109,11 +132,24 @@ class DocumentsProvider implements ProviderInterface
         return $response;
     }
 
-    private function handleUserPriceLists()
+    private function ConvertHistoryToDocumentsDto(array $histoires): DocumentsDto
     {
-        foreach ($this->userDb->getPriceListUsers() as $itemRec){
-            $this->userPriceLists[] = $itemRec->getPriceList()->getExtId();
+        $result = new DocumentsDto();
+        $result->documents = [];
+        foreach ($histoires as $histoire) {
+            assert($histoire instanceof History);
+            $obj = new DocumentDto();
+            $obj->documentNumber = $histoire->getOrderExtId();
+            $obj->documentType = $histoire->getDocumentType();
+            $obj->userName = $histoire->getUser()->getName();
+            $obj->userExId = $histoire->getUser()->getExtId();
+            $obj->status = $histoire->getOrderStatus();
+            $obj->createdAt = $histoire->getCreatedAt();
+            $obj->updatedAt = $histoire->getUpdatedAt();
+            $obj->total = $histoire->getTotal();
+            $result->documents[] = $obj;
         }
+        return $result;
     }
 
 }

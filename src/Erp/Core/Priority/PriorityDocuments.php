@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Erp\Core\Priority;
+use App\Enum\DocumentsType;
 use App\Erp\Core\Dto\DocumentDto;
 use App\Erp\Core\Dto\DocumentItemDto;
 use App\Erp\Core\Dto\DocumentItemFileDto;
@@ -37,15 +38,14 @@ class PriorityDocuments extends Priority
         $result = [];
         foreach ($response as $itemRec) {
             $dto = new DocumentDto();
-            $dto->user_name = $itemRec['CDES'];
+            $dto->userName = $itemRec['CDES'];
             $dto->userExId = $itemRec['CUSTNAME'];
             $dto->total = $itemRec['QPRICE'];
-            $dto->date = $itemRec['CURDATE'];
-            $dto->document_type = 'orders';
-            $dto->type = 'הזמנות';
+            $dto->createdAt = $itemRec['CURDATE'];
+            $dto->documentType = DocumentsType::ORDERS;
             $dto->status = $itemRec['ORDSTATUSDES'];
-            $dto->document_number = $itemRec['ORDNAME'];
-            $dto->date_payed = $itemRec['STATUSDATE'];
+            $dto->documentNumber = $itemRec['ORDNAME'];
+            $dto->updatedAt = $itemRec['STATUSDATE'];
             $result[] = $dto;
         }
 
@@ -72,7 +72,7 @@ class PriorityDocuments extends Priority
             $result->totalPrecent = $itemRec['PERCENT'];
             $result->totalPriceAfterTax = $itemRec['TOTPRICE'];
             $result->totalTax = $itemRec['VAT'];
-            $result->documentType = 'הזמנה';
+            $result->documentType = DocumentsType::ORDERS;
             foreach ($itemRec['ORDERITEMS_SUBFORM'] as $subItem){
                 $dto = new DocumentItemDto();
                 $dto->sku = $subItem['PARTNAME'];
@@ -120,15 +120,14 @@ class PriorityDocuments extends Priority
         $result = [];
         foreach ($response as $itemRec) {
             $dto = new DocumentDto();
-            $dto->user_name = $itemRec['CDES'];
+            $dto->userName = $itemRec['CDES'];
             $dto->userExId = $itemRec['CUSTNAME'];
             $dto->total = $itemRec['QPRICE'];
-            $dto->date = $itemRec['PDATE'];
-            $dto->type = 'הצעות מחיר';
-            $dto->document_type = 'priceOffer';
+            $dto->createdAt = $itemRec['PDATE'];
+            $dto->documentType = DocumentsType::PRICE_OFFER;
             $dto->status = $itemRec['STATDES'];
-            $dto->document_number = $itemRec['CPROFNUM'];
-            $dto->date_payed = $itemRec['EXPIRYDATE'];
+            $dto->documentNumber = $itemRec['CPROFNUM'];
+            $dto->updatedAt = $itemRec['EXPIRYDATE'];
             $result[] = $dto;
         }
 
@@ -153,7 +152,7 @@ class PriorityDocuments extends Priority
             $result->totalPrecent = $itemRec['PERCENT'];
             $result->totalPriceAfterTax = $itemRec['TOTPRICE'];
             $result->totalTax = $itemRec['VAT'];
-            $result->documentType = 'הצעת מחיר';
+            $result->documentType = DocumentsType::PRICE_OFFER;
             foreach ($itemRec['CPROFITEMS_SUBFORM'] as $subItem){
                 $dto = new DocumentItemDto();
                 $dto->sku = $subItem['PARTNAME'];
@@ -200,15 +199,14 @@ class PriorityDocuments extends Priority
         $result = [];
         foreach ($response as $itemRec) {
             $dto = new DocumentDto();
-            $dto->user_name = $itemRec['CDES'];
+            $dto->userName = $itemRec['CDES'];
             $dto->userExId = $itemRec['CUSTNAME'];
             $dto->total = $itemRec['TOTQUANT'];
-            $dto->date = $itemRec['CURDATE'];
-            $dto->type = 'תעודות משלוח';
+            $dto->createdAt = $itemRec['CURDATE'];
             $dto->status = $itemRec['STATDES'];
-            $dto->document_type = 'deliveryOrder';
-            $dto->document_number = $itemRec['DOCNO'];
-            $dto->date_payed = $itemRec['UDATE'];
+            $dto->documentType = DocumentsType::DELIVERY_ORDER;
+            $dto->documentNumber = $itemRec['DOCNO'];
+            $dto->updatedAt = $itemRec['UDATE'];
             $result[] = $dto;
         }
 
@@ -233,7 +231,7 @@ class PriorityDocuments extends Priority
             $result->totalPrecent = $itemRec['PERCENT'];
             $result->totalPriceAfterTax = $itemRec['TOTPRICE'];
             $result->totalTax = $itemRec['VAT'];
-            $result->documentType = 'תעודת משלוח';
+            $result->documentType = DocumentsType::RETURN_ORDERS;
             foreach ($itemRec['TRANSORDER_D_SUBFORM'] as $subItem) {
                 $dto = new DocumentItemDto();
                 $dto->sku = $subItem['PARTNAME'];
@@ -281,15 +279,14 @@ class PriorityDocuments extends Priority
         $result = [];
         foreach ($response as $itemRec) {
             $dto = new DocumentDto();
-            $dto->user_name = $itemRec['CDES'];
+            $dto->userName = $itemRec['CDES'];
             $dto->userExId = $itemRec['CUSTNAME'];
             $dto->total = $itemRec['QPRICE'];
-            $dto->date = $itemRec['IVDATE'];
-            $dto->type = 'חשבוניות מס';
-            $dto->document_type = 'aiInvoice';
+            $dto->createdAt = $itemRec['IVDATE'];
+            $dto->documentType = DocumentsType::AI_INVOICE;
             $dto->status = $itemRec['STATDES'];
-            $dto->document_number = $itemRec['IVNUM'];
-            $dto->date_payed = $itemRec['IVDATE'];
+            $dto->documentNumber = $itemRec['IVNUM'];
+            $dto->updatedAt = $itemRec['IVDATE'];
             $result[] = $dto;
         }
 
@@ -314,7 +311,7 @@ class PriorityDocuments extends Priority
             $result->totalPrecent = $itemRec['PERCENT'];
             $result->totalPriceAfterTax = $itemRec['TOTPRICE'];
             $result->totalTax = $itemRec['VAT'];
-            $result->documentType = 'חשבונית מס';
+            $result->documentType = DocumentsType::AI_INVOICE;
             foreach ($itemRec['AINVOICEITEMS_SUBFORM'] as $subItem) {
                 $dto = new DocumentItemDto();
                 $dto->sku = $subItem['PARTNAME'];
@@ -363,15 +360,14 @@ class PriorityDocuments extends Priority
         $result = [];
         foreach ($response as $itemRec) {
             $dto = new DocumentDto();
-            $dto->user_name = $itemRec['CDES'];
+            $dto->userName = $itemRec['CDES'];
             $dto->userExId = $itemRec['CUSTNAME'];
             $dto->total = $itemRec['TOTPRICE'];
-            $dto->date = $itemRec['IVDATE'];
-            $dto->type = 'חשבוניות מס מרכזות';
-            $dto->document_type = 'ciInvoice';
+            $dto->createdAt = $itemRec['IVDATE'];
+            $dto->documentType = DocumentsType::CI_INVOICE;
             $dto->status = $itemRec['STATDES'];
-            $dto->document_number = $itemRec['IVNUM'];
-            $dto->date_payed = $itemRec['IVDATE'];
+            $dto->documentNumber = $itemRec['IVNUM'];
+            $dto->updatedAt = $itemRec['IVDATE'];
             $result[] = $dto;
         }
 
@@ -396,7 +392,7 @@ class PriorityDocuments extends Priority
             $result->totalPrecent = $itemRec['PERCENT'];
             $result->totalPriceAfterTax = $itemRec['TOTPRICE'];
             $result->totalTax = $itemRec['VAT'];
-            $result->documentType = 'חשבונית מס מרכזת';
+            $result->documentType = DocumentsType::CI_INVOICE;
             foreach ($itemRec['CINVOICEITEMS_SUBFORM'] as $subItem) {
                 $dto = new DocumentItemDto();
                 $dto->sku = $subItem['PARTNAME'];
@@ -444,15 +440,14 @@ class PriorityDocuments extends Priority
         $result = [];
         foreach ($response as $itemRec) {
             $dto = new DocumentDto();
-            $dto->user_name = $itemRec['CDES'];
+            $dto->userName = $itemRec['CDES'];
             $dto->userExId = $itemRec['CUSTNAME'];
             $dto->total = $itemRec['TOTPRICE'];
-            $dto->date = $itemRec['CURDATE'];
-            $dto->type = 'החזרות';
-            $dto->document_type = 'returnOrders';
+            $dto->createdAt = $itemRec['CURDATE'];
+            $dto->documentType = DocumentsType::RETURN_ORDERS;
             $dto->status = $itemRec['STATDES'];
-            $dto->document_number = $itemRec['DOCNO'];
-            $dto->date_payed = $itemRec['UDATE'];
+            $dto->documentNumber = $itemRec['DOCNO'];
+            $dto->updatedAt = $itemRec['UDATE'];
             $result[] = $dto;
         }
 
@@ -477,7 +472,7 @@ class PriorityDocuments extends Priority
             $result->totalPrecent = $itemRec['PERCENT'];
             $result->totalPriceAfterTax = $itemRec['TOTPRICE'];
             $result->totalTax = $itemRec['VAT'];
-            $result->documentType = 'החזרות';
+            $result->documentType = DocumentsType::RETURN_ORDERS;
             foreach ($itemRec['TRANSORDER_N_SUBFORM'] as $subItem) {
                 $dto = new DocumentItemDto();
                 $dto->sku = $subItem['PARTNAME'];

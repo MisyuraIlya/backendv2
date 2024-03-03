@@ -6,7 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
-use App\Enum\DocumentTypeHistory;
+use App\Enum\DocumentsType;
 use App\Enum\PurchaseStatus;
 use App\Repository\HistoryRepository;
 use App\State\HistoryStateProvider;
@@ -83,7 +83,7 @@ class History
 
     #[Groups(['history:read'])]
     #[ORM\Column(length: 255)]
-    private ?DocumentTypeHistory $documentType = null;
+    private ?DocumentsType $documentType = null;
 
     #[Groups(['history:read','historyDetailed:read'])]
     #[ORM\ManyToOne(inversedBy: 'histories')]
@@ -265,12 +265,12 @@ class History
         return $this;
     }
 
-    public function getDocumentType(): ?DocumentTypeHistory
+    public function getDocumentType(): ?DocumentsType
     {
         return $this->documentType;
     }
 
-    public function setDocumentType(?DocumentTypeHistory $documentType): static
+    public function setDocumentType(?DocumentsType $documentType): static
     {
         $this->documentType = $documentType;
 

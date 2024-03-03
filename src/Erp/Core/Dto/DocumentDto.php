@@ -2,15 +2,18 @@
 
 namespace App\Erp\Core\Dto;
 
+use App\Enum\DocumentsType;
+
 class DocumentDto
 {
-    public $document_number;
-    public $document_type;
-    public $user_name;
+    public $documentNumber;
+    public DocumentsType $documentType;
+    public $userName;
     public $userExId;
-    public $type;
-    public $date;
-    public $date_payed;
-    public $total;
     public $status;
+    public $createdAt;
+    public $updatedAt;
+    public $total;
+
+
 }

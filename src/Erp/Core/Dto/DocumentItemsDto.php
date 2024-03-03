@@ -2,6 +2,8 @@
 
 namespace App\Erp\Core\Dto;
 
+use App\Enum\DocumentsType;
+
 class DocumentItemsDto
 {
     /** @var DocumentItemDto[] */
@@ -12,7 +14,7 @@ class DocumentItemsDto
     public ?int $totalAfterDiscount;
     public ?int $totalPrecent;
 
-    public ?string $documentType;
+    public ?DocumentsType $documentType;
     public ?string $base64Pdf;
 
     /** @var DocumentItemFileDto[] */
