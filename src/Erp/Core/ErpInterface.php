@@ -21,6 +21,7 @@ use App\Erp\Core\Dto\StocksDto;
 use App\Erp\Core\Dto\UsersDto;
 use App\Repository\HistoryDetailedRepository;
 use App\Repository\HistoryRepository;
+use phpDocumentor\Reflection\Types\Boolean;
 
 interface ErpInterface
 {
@@ -34,7 +35,7 @@ interface ErpInterface
     public function GetOnlineUser(string $userExtId): User;
     public function SendOrder(int $historyId, HistoryRepository $historyRepository, HistoryDetailedRepository $historyDetailedRepository);
     public function GetMigvansOnline(?array $skus): MigvansDto;
-    public function GetDocuments(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentType,  ?int $limit = 10): DocumentsDto;
+    public function GetDocuments(User $user, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentsType,  ?int $page ,?int $limit = 10): DocumentsDto;
     public function GetDocumentsItem(string $documentNumber, string $table): DocumentItemsDto;
     public function GetCartesset(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo): CartessetDto;
     public function PurchaseHistoryByUserAndSku(string $userExtId, string $sku): PurchaseHistory;

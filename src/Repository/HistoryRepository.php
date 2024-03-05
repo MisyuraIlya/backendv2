@@ -43,7 +43,7 @@ class HistoryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function historyHandler(\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, string $userId, int $page, ?DocumentsType $documentType = null)
+    public function historyHandler(\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, ?string $userId, int $page, int $limit = 10 ,?DocumentsType $documentType = null)
     {
         $entityManager = $this->getEntityManager();
         $queryBuilder = $entityManager->createQueryBuilder();
@@ -51,16 +51,19 @@ class HistoryRepository extends ServiceEntityRepository
             ->select('h')
             ->from(History::class, 'h')
             ->where('h.createdAt >= :dateFrom')
-            ->andWhere('h.createdAt <= :dateTo')
-            ->andWhere('h.user = :userId')
-            ->setMaxResults(10)
-            ->setFirstResult(($page - 1) * 10);
+            ->andWhere('h.createdAt <= :dateTo');
 
         $parameters = [
             'dateFrom' => $dateFrom,
             'dateTo' => $dateTo,
-            'userId' => $userId,
         ];
+
+        if ($userId !== null) {
+            $queryBuilder->andWhere('h.user = :userId');
+            $parameters['userId'] = $userId;
+        }
+        $queryBuilder->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit);
 
         if ($documentType !== null) {
             $queryBuilder->andWhere('h.documentType = :documentType');
@@ -72,6 +75,7 @@ class HistoryRepository extends ServiceEntityRepository
         $histories = $queryBuilder->getQuery()->getResult();
         return $histories;
     }
+
 
 //    /**
 //     * @return History[] Returns an array of History objects

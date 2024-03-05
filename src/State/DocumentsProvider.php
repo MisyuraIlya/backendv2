@@ -50,17 +50,12 @@ class DocumentsProvider implements ProviderInterface
     {
         if ($operation instanceof CollectionOperationInterface) {
             $currentPage = $this->pagination->getPage($context);
-            $itemsPerPage = $this->pagination->getLimit($operation, $context);
-
-            $offset = $this->pagination->getOffset($operation, $context);
             $result = $this->CollectionHandler($operation,$uriVariables,$context);
             $totalItems = count($result);
-            $start = ($currentPage - 1) * $itemsPerPage;
-            $slicedResult = array_slice($result, $start, $itemsPerPage);
             return new TraversablePaginator(
-                new \ArrayIterator($slicedResult),
+                new \ArrayIterator($result),
                 $currentPage,
-                $itemsPerPage,
+                $this->limit,
                 $totalItems,
             );
         }
@@ -74,24 +69,24 @@ class DocumentsProvider implements ProviderInterface
         $dateTo = \DateTimeImmutable::createFromFormat($format, $this->toDate);
         $page = $this->pagination->getPage($context);
         if($this->documentType == 'all') {
-            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::ALL, $this->limit)->documents;
+            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::ALL, $page, $this->limit)->documents;
         } elseif($this->documentType == 'orders') {
-            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::ORDERS, $this->limit)->documents;
+            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::ORDERS,  $page, $this->limit)->documents;
         } elseif($this->documentType == 'priceOffer') {
-            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::PRICE_OFFER, $this->limit)->documents;
+            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::PRICE_OFFER,  $page, $this->limit)->documents;
         } elseif($this->documentType == 'deliveryOrder') {
-            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::DELIVERY_ORDER, $this->limit)->documents;
+            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::DELIVERY_ORDER,  $page, $this->limit)->documents;
         } elseif($this->documentType == 'aiInvoice') {
-            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::AI_INVOICE, $this->limit)->documents;
+            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::AI_INVOICE,  $page, $this->limit)->documents;
         } elseif($this->documentType == 'ciInvoice') {
-            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::CI_INVOICE, $this->limit)->documents;
+            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::CI_INVOICE,  $page, $this->limit)->documents;
         } elseif($this->documentType == 'returnOrder') {
-            return $this->erpManager->GetDocuments($this->userDb->getExtId(), $dateFrom, $dateTo, DocumentsType::RETURN_ORDERS, $this->limit)->documents;
+            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::RETURN_ORDERS,  $page, $this->limit)->documents;
         } elseif($this->documentType == 'history') {
-            $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page);
+            $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page,  $this->limit);
             return $this->ConvertHistoryToDocumentsDto($history)->documents;
         } elseif($this->documentType == 'draft') {
-            $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page, DocumentsType::DRAFT);
+            $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page,  $this->limit ,DocumentsType::DRAFT);
             return $this->ConvertHistoryToDocumentsDto($history)->documents;
         }
     }

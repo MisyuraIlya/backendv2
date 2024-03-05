@@ -22,6 +22,7 @@ use App\Erp\Core\Dto\UsersDto;
 use App\Erp\Core\Priority\Priority;
 use App\Repository\HistoryDetailedRepository;
 use App\Repository\HistoryRepository;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ErpManager implements ErpInterface
@@ -80,10 +81,10 @@ class ErpManager implements ErpInterface
     {
         return $this->erp->GetMigvanOnline($userExtId);
     }
-    public function GetDocuments(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentType ,?int $limit = 10): DocumentsDto
+    public function GetDocuments(User $user ,\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentType , ?int $page , ?int $limit = 10): DocumentsDto
     {
 
-        return $this->erp->GetDocuments($userExId, $dateFrom,$dateTo, $documentType, $limit);
+        return $this->erp->GetDocuments($user, $dateFrom,$dateTo, $documentType, $page, $limit);
     }
     public function GetDocumentsItem(string $documentNumber, string $table): DocumentItemsDto
     {

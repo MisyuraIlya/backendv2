@@ -4,17 +4,17 @@ namespace App\Enum;
 
 enum DocumentsType: string
 {
-    case ALL = 'הכל';
-    case ORDERS = 'הזמנה';
-    case PRICE_OFFER = 'הצעת מחיר';
-    case DELIVERY_ORDER = 'תעודות משלוח';
-    case AI_INVOICE = 'חשבוניות מס';
-    case CI_INVOICE = 'חשבוניות מס מרכזות';
-    case RETURN_ORDERS = 'החזרות';
+    case ALL = 'all';
+    case ORDERS = 'order';
+    case PRICE_OFFER = 'price offer';
+    case DELIVERY_ORDER = ' delivery order';
+    case AI_INVOICE = 'ai invoice';
+    case CI_INVOICE = 'ci invoice';
+    case RETURN_ORDERS = 'return order';
 
-    case HISTORY = 'היסטוריה';
+    case HISTORY = 'history';
 
-    case DRAFT = 'טיוטה';
+    case DRAFT = 'draft';
 
     public static function getAllDetails(): array
     {
