@@ -6,11 +6,11 @@ enum DocumentsType: string
 {
     case ALL = 'all';
     case ORDERS = 'order';
-    case PRICE_OFFER = 'price offer';
-    case DELIVERY_ORDER = ' delivery order';
-    case AI_INVOICE = 'ai invoice';
-    case CI_INVOICE = 'ci invoice';
-    case RETURN_ORDERS = 'return order';
+    case PRICE_OFFER = 'priceOffer';
+    case DELIVERY_ORDER = ' deliveryOrder';
+    case AI_INVOICE = 'aiInvoice';
+    case CI_INVOICE = 'ciInvoice';
+    case RETURN_ORDERS = 'returnOrder';
 
     case HISTORY = 'history';
 
@@ -19,33 +19,41 @@ enum DocumentsType: string
     public static function getAllDetails(): array
     {
         return [
-            'ALL' => [
+            'all' => [
                 'HEBREW' => self::ALL,
-                'ENGLISH' => 'all'
+                'ENGLISH' => self::ALL
             ],
-            'ORDERS' => [
+            'order' => [
                 'HEBREW' => self::ORDERS,
-                'ENGLISH' => 'orders'
+                'ENGLISH' => self::ORDERS
             ],
-            'PRICE_OFFER' => [
+            'priceOffer' => [
                 'HEBREW' => self::PRICE_OFFER,
-                'ENGLISH' => 'priceOffer'
+                'ENGLISH' => self::PRICE_OFFER
             ],
-            'DELIVERY_ORDER' => [
-                'HEBREW' => self::DELIVERY_ORDER,
-                'ENGLISH' => 'deliveryOrder'
+            'deliveryOrder' => [
+                'HEBREW' => 'deliveryOrder',
+                'ENGLISH' => self::DELIVERY_ORDER
             ],
-            'AI_INVOICE' => [
+            'aiInvoice' => [
                 'HEBREW' => self::AI_INVOICE,
-                'ENGLISH' => 'aiInvoice'
+                'ENGLISH' => self::AI_INVOICE,
             ],
-            'CI_INVOICE' => [
+            'ciInvoice' => [
                 'HEBREW' => self::CI_INVOICE,
-                'ENGLISH' => 'ciInvoice'
+                'ENGLISH' => self::CI_INVOICE,
             ],
-            'RETURN_ORDERS' => [
+            'returnOrder' => [
                 'HEBREW' => self::RETURN_ORDERS,
-                'ENGLISH' => 'returnOrders'
+                'ENGLISH' => self::RETURN_ORDERS,
+            ],
+            'history' => [
+                'HEBREW' => self::HISTORY,
+                'ENGLISH' => self::HISTORY,
+            ],
+            'draft' => [
+                'HEBREW' => self::DRAFT,
+                'ENGLISH' => self::DRAFT,
             ]
         ];
     }

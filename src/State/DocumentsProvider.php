@@ -30,19 +30,14 @@ class DocumentsProvider implements ProviderInterface
     )
     {
 
-        $this->documentType = $this->requestStack->getCurrentRequest()->attributes->get('documentType');
+        $docType = $this->requestStack->getCurrentRequest()->attributes->get('documentType');
+        $this->documentType = $this->GetType($docType);
         $this->fromDate= $this->requestStack->getCurrentRequest()->attributes->get('dateFrom');
         $this->toDate = $this->requestStack->getCurrentRequest()->attributes->get('dateTo');
         $this->userId = $this->requestStack->getCurrentRequest()->query->get('userId');
         $this->userDb = $this->userRepository->findOneById($this->userId);
         $this->limit = $this->requestStack->getCurrentRequest()->query->get('limit') ?? 10;
-
-
-//        $this->documentItemType = $this->requestStack->getCurrentRequest()->query->get('documentItemType');
-//        $this->handleUserPriceLists();
-
-
-
+        $this->documentNumber= $this->requestStack->getCurrentRequest()->attributes->get('documentNumber');
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -70,63 +65,64 @@ class DocumentsProvider implements ProviderInterface
         $dateFrom = \DateTimeImmutable::createFromFormat($format, $this->fromDate);
         $dateTo = \DateTimeImmutable::createFromFormat($format, $this->toDate);
         $page = $this->pagination->getPage($context);
-        if($this->documentType == 'all') {
+
+        if($this->documentType == DocumentsType::ALL) {
             $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::ALL)->documents;
             return [
                 "result" => $response,
                 "totalCount" => count($response),
                 'slice' => true
             ];
-        } elseif($this->documentType == 'orders') {
+        } elseif($this->documentType == DocumentsType::ORDERS) {
             $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::ORDERS)->documents;
             return [
                 "result" => $response,
                 "totalCount" => count($response),
                 'slice' => true
             ];
-        } elseif($this->documentType == 'priceOffer') {
+        } elseif($this->documentType == DocumentsType::PRICE_OFFER) {
             $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::PRICE_OFFER)->documents;
             return [
                 "result" => $response,
                 "totalCount" => count($response),
                 'slice' => true
             ];
-        } elseif($this->documentType == 'deliveryOrder') {
+        } elseif($this->documentType == DocumentsType::DELIVERY_ORDER) {
             $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::DELIVERY_ORDER)->documents;
             return [
                 "result" => $response,
                 "totalCount" => count($response),
                 'slice' => true
             ];
-        } elseif($this->documentType == 'aiInvoice') {
+        } elseif($this->documentType == DocumentsType::AI_INVOICE) {
             $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::AI_INVOICE)->documents;
             return [
                 "result" => $response,
                 "totalCount" => count($response),
                 'slice' => true
             ];
-        } elseif($this->documentType == 'ciInvoice') {
+        } elseif($this->documentType == DocumentsType::CI_INVOICE) {
             $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::CI_INVOICE)->documents;
             return [
                 "result" => $response,
                 "totalCount" => count($response),
                 'slice' => true
             ];
-        } elseif($this->documentType == 'returnOrders') {
+        } elseif($this->documentType == DocumentsType::RETURN_ORDERS) {
             $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::RETURN_ORDERS)->documents;
             return [
                 "result" => $response,
                 "totalCount" => count($response),
                 'slice' => true
             ];
-        } elseif($this->documentType == 'history') {
+        } elseif($this->documentType == DocumentsType::HISTORY) {
             $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page, $this->limit);
             return [
                 "result" => $this->ConvertHistoryToDocumentsDto($history['result'])->documents,
                 "totalCount" => $history['totalCount'],
                 'slice' => false
             ];
-        } elseif($this->documentType == 'draft') {
+        } elseif($this->documentType == DocumentsType::DRAFT) {
             $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page,  $this->limit ,DocumentsType::DRAFT);
             return [
                 "result" => $this->ConvertHistoryToDocumentsDto($history['result'])->documents,
@@ -138,7 +134,7 @@ class DocumentsProvider implements ProviderInterface
 
     private function GetHandler($operation,$uriVariables,$context)
     {
-        $response = $this->erpManager->GetDocumentsItem($uriVariables['documentNumber'],$this->documentItemType);
+        $response = $this->erpManager->GetDocumentsItem($this->documentNumber,$this->documentType);
         $makats = [];
         foreach ($response->products as &$itemRec){
             $findProd = $this->productRepository->findOneBySkuAndToArray($itemRec->sku);
@@ -194,4 +190,14 @@ class DocumentsProvider implements ProviderInterface
         return $result;
     }
 
+
+    private function GetType(string $value): DocumentsType
+    {
+        $enumDetails = DocumentsType::getAllDetails();
+        if (isset($enumDetails[$value]['ENGLISH'])) {
+            return $enumDetails[$value]['ENGLISH'];
+        }
+
+        throw new \InvalidArgumentException("Invalid DocumentsType: $value");
+    }
 }

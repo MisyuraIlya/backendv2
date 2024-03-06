@@ -9,6 +9,7 @@ use App\State\DocumentsProvider;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\ApiProperty;
 use App\State\RestoreCartStateProvider;
+use phpDocumentor\Reflection\Types\String_;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use ApiPlatform\Metadata\Link;
 
@@ -23,11 +24,18 @@ use ApiPlatform\Metadata\Link;
                 'dateFrom' => new Link(fromClass: Date::class),
                 'dateTo' => new Link(fromClass: Date::class),
             ],
+            provider: DocumentsProvider::class,
         ),
-        new Get()
+        new Get(
+            uriTemplate: '/documentItems/{documentType}/{documentNumber}',
+            uriVariables: [
+                'documentType' => new Link(fromClass: DocumentsType::class),
+                'documentNumber' => new Link(fromClass: String_::class),
+            ],
+            provider: DocumentsProvider::class,
+        )
     ],
     paginationItemsPerPage: 10,
-    provider: DocumentsProvider::class,
 )]
 
 class Documents

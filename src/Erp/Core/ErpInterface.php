@@ -36,7 +36,7 @@ interface ErpInterface
     public function SendOrder(int $historyId, HistoryRepository $historyRepository, HistoryDetailedRepository $historyDetailedRepository);
     public function GetMigvansOnline(?array $skus): MigvansDto;
     public function GetDocuments(User $user, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentsType): DocumentsDto;
-    public function GetDocumentsItem(string $documentNumber, string $table): DocumentItemsDto;
+    public function GetDocumentsItem(string $documentNumber, DocumentsType $documentType): DocumentItemsDto;
     public function GetCartesset(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo): CartessetDto;
     public function PurchaseHistoryByUserAndSku(string $userExtId, string $sku): PurchaseHistory;
 

@@ -204,34 +204,34 @@ class Priority implements ErpInterface
         $obj->documents = $mergedArray;
         return $obj;
     }
-    public function GetDocumentsItem(string $documentNumber, string $table): DocumentItemsDto
+    public function GetDocumentsItem(string $documentNumber, DocumentsType $documentType): DocumentItemsDto
     {
-        if($table == 'orders') {
+        if($documentType == DocumentsType::ORDERS) {
             $orders = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetOrderItems($documentNumber);
             return $orders;
         }
 
-        if($table == 'priceOffer') {
+        if($documentType == DocumentsType::PRICE_OFFER) {
             $offers = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetPriceOfferItem($documentNumber);
             return $offers;
         }
 
-        if($table == 'deliveryOrder') {
+        if($documentType == DocumentsType::DELIVERY_ORDER) {
             $documentOrder = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetDeliveryOrderItem($documentNumber);
             return $documentOrder;
         }
 
-        if($table == 'aiInvoice') {
+        if($documentType == DocumentsType::AI_INVOICE) {
             $aiInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetAiInvoiceItem($documentNumber);
             return $aiInvoice;
         }
 
-        if($table == 'ciInvoice') {
+        if($documentType == DocumentsType::CI_INVOICE) {
             $ciInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetCiInvoiceItem($documentNumber);
             return $ciInvoice;
         }
 
-        if($table == 'returnOrders') {
+        if($documentType == DocumentsType::RETURN_ORDERS) {
             $returnDocItem = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetReturnDocsItem($documentNumber);
             return $returnDocItem;
         }

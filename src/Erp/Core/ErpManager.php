@@ -86,9 +86,9 @@ class ErpManager implements ErpInterface
 
         return $this->erp->GetDocuments($user, $dateFrom,$dateTo, $documentType);
     }
-    public function GetDocumentsItem(string $documentNumber, string $table): DocumentItemsDto
+    public function GetDocumentsItem(string $documentNumber, DocumentsType $documentType): DocumentItemsDto
     {
-        return $this->erp->GetDocumentsItem($documentNumber,$table);
+        return $this->erp->GetDocumentsItem($documentNumber,$documentType);
     }
     public function GetCartesset(string $userExId, \DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo): CartessetDto
     {
