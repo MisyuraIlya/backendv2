@@ -4,10 +4,8 @@ namespace App\Repository;
 
 use App\Entity\History;
 use App\Enum\DocumentsType;
-use App\Enum\DocumentTypeHistory;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
 /**
  * @extends ServiceEntityRepository<History>
  *

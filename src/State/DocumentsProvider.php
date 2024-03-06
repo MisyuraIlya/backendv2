@@ -9,7 +9,6 @@ use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
 use App\Entity\History;
 use App\Enum\DocumentsType;
-use App\Enum\DocumentTypeHistory;
 use App\Erp\Core\Dto\DocumentDto;
 use App\Erp\Core\Dto\DocumentsDto;
 use App\Erp\Core\ErpManager;

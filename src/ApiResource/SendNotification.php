@@ -8,9 +8,8 @@ use ApiPlatform\Metadata\Post;
 use App\ApiResource\Dto\CartItemDto;
 use App\ApiResource\Dto\CartsDto;
 use App\Entity\HistoryDetailed;
-use App\Enum\DocumentTypeHistory;
 use App\State\SendNotificationProcessor;
-
+use App\Enum\DocumentsType;
 #[ApiResource(
     operations: [
         new Post(

@@ -3,13 +3,12 @@
 namespace App\Factory;
 
 use App\Entity\History;
-use App\Enum\DocumentTypeHistory;
 use App\Enum\PurchaseStatus;
 use App\Repository\HistoryRepository;
 use Zenstruck\Foundry\ModelFactory;
 use Zenstruck\Foundry\Proxy;
 use Zenstruck\Foundry\RepositoryProxy;
-
+use App\Enum\DocumentsType;
 /**
  * @extends ModelFactory<History>
  *
@@ -49,7 +48,7 @@ final class HistoryFactory extends ModelFactory
     protected function getDefaults(): array
     {
         $purchaseStatusValues = (new \ReflectionClass(PurchaseStatus::class))->getConstants();
-        $documentType = (new \ReflectionClass(DocumentTypeHistory::class))->getConstants();
+        $documentType = (new \ReflectionClass(DocumentsType::class))->getConstants();
         return [
             'user' => UserFactory::new(),
             'orderExtId' =>  self::faker()->numberBetween(100000, 999999),

@@ -6,7 +6,6 @@ use App\Entity\History;
 use App\Entity\HistoryDetailed;
 use App\Entity\User;
 use App\Enum\DocumentsType;
-use App\Enum\DocumentTypeHistory;
 use App\Erp\Core\Dto\CartessetDto;
 use App\Erp\Core\Dto\CartessetLineDto;
 use App\Erp\Core\Dto\CategoriesDto;
@@ -305,11 +304,11 @@ class Priority implements ErpInterface
         $findDetailds = $historyDetailedRepository->findOneByHistoryId($historyId);
         if(!$order) throw new \Exception('לא נמצא הזמנה');
 
-        if($order->getDocumentType() === DocumentTypeHistory::ORDER) {
+        if($order->getDocumentType() === DocumentsType::ORDERS) {
             $response = $this->SendOrderTemplate($order,$findDetailds);
-        } elseif ($order->getDocumentType() === DocumentTypeHistory::QUOTE) {
+        } elseif ($order->getDocumentType() === DocumentsType::PRICE_OFFER) {
             $response = $this->SendQuoteTemplate($order,$findDetailds);
-        } elseif ($order->getDocumentType() === DocumentTypeHistory::RETURN) {
+        } elseif ($order->getDocumentType() === DocumentsType::RETURN_ORDERS) {
             $response = $this->SendReturnTemplate($order,$findDetailds);
         } else {
             throw new \Exception('לא נמצא מסמך כזה');

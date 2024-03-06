@@ -9,9 +9,8 @@ use App\ApiResource\Dto\CartItemDto;
 use App\ApiResource\Dto\CartsDto;
 use App\Entity\HistoryDetailed;
 use App\Entity\User;
-use App\Enum\DocumentTypeHistory;
 use App\State\SendOrderProcessor;
-
+use App\Enum\DocumentsType;
 #[ApiResource(
     shortName: 'SendOrder',
     operations: [
@@ -32,7 +31,7 @@ class SendOrder
 
     public ?float $totalBeforeTax = null;
 
-    public ?DocumentTypeHistory $documentType = null;
+    public ?DocumentsType $documentType = null;
 
     public ?int $agentId = null;
 
@@ -123,17 +122,17 @@ class SendOrder
     }
 
     /**
-     * @return DocumentTypeHistory|null
+     * @return DocumentsType|null
      */
-    public function getDocumentType(): ?DocumentTypeHistory
+    public function getDocumentType(): ?DocumentsType
     {
         return $this->documentType;
     }
 
     /**
-     * @param DocumentTypeHistory|null $documentType
+     * @param DocumentsType|null $documentType
      */
-    public function setDocumentType(?DocumentTypeHistory $documentType): void
+    public function setDocumentType(?DocumentsType $documentType): void
     {
         $this->documentType = $documentType;
     }
