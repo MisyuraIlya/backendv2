@@ -167,7 +167,11 @@ class Priority implements ErpInterface
         }
         return $result;
     }
-    public function GetDocuments(User $user,\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentsType , ?int $page = 1, ?int $limit = 10): DocumentsDto
+
+    /**
+     * PRIORITY DOSENT SUPPORT FULL PAGINATION LIKE $COUNT=TRUE and because we cant fetch totalItems there no pagination
+     */
+    public function GetDocuments(User $user,\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentsType): DocumentsDto
     {
         $order = [];
         $offers = [];
@@ -176,24 +180,24 @@ class Priority implements ErpInterface
         $ciInvoice = [];
         $returnDocs = [];
         if($documentsType == DocumentsType::ORDERS){
-            $order = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetOrders($user,$dateFrom, $dateTo,$page,$limit);
+            $order = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetOrders($user,$dateFrom, $dateTo);
         } else if ($documentsType == DocumentsType::PRICE_OFFER) {
-            $offers = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetPriceOffer($user,$dateFrom, $dateTo,$page,$limit);
+            $offers = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetPriceOffer($user,$dateFrom, $dateTo);
         } else if($documentsType == DocumentsType::DELIVERY_ORDER) {
-            $documents = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetDeliveryOrder($user,$dateFrom, $dateTo,$page,$limit);
+            $documents = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetDeliveryOrder($user,$dateFrom, $dateTo);
         } else if($documentsType == DocumentsType::AI_INVOICE) {
-            $aiInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetAiInvoice($user,$dateFrom, $dateTo,$page,$limit);
+            $aiInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetAiInvoice($user,$dateFrom, $dateTo);
         } else if($documentsType == DocumentsType::CI_INVOICE) {
-            $ciInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetCiInvoice($user,$dateFrom, $dateTo,$page,$limit);
+            $ciInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetCiInvoice($user,$dateFrom, $dateTo);
         } else if($documentsType == DocumentsType::RETURN_ORDERS) {
-            $returnDocs = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetReturnDocs($user,$dateFrom, $dateTo,$page,$limit);
+            $returnDocs = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetReturnDocs($user,$dateFrom, $dateTo);
         } else if($documentsType == DocumentsType::ALL) {
-            $order = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetOrders($user,$dateFrom, $dateTo,$page,$limit);
-            $offers = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetPriceOffer($user,$dateFrom, $dateTo,$page,$limit);
-            $documents = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetDeliveryOrder($user,$dateFrom, $dateTo,$page,$limit);
-            $aiInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetAiInvoice($user,$dateFrom, $dateTo,$page,$limit);
-            $ciInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetCiInvoice($user,$dateFrom, $dateTo,$page,$limit);
-            $returnDocs = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetReturnDocs($user,$dateFrom, $dateTo,$page,$limit);
+            $order = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetOrders($user,$dateFrom, $dateTo);
+            $offers = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetPriceOffer($user,$dateFrom, $dateTo);
+            $documents = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetDeliveryOrder($user,$dateFrom, $dateTo);
+            $aiInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetAiInvoice($user,$dateFrom, $dateTo);
+            $ciInvoice = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetCiInvoice($user,$dateFrom, $dateTo);
+            $returnDocs = (new PriorityDocuments($this->url, $this->username, $this->password, $this->httpClient))->GetReturnDocs($user,$dateFrom, $dateTo);
         }
         $mergedArray = array_merge($order, $offers, $documents, $aiInvoice, $ciInvoice, $returnDocs);
         $obj = new DocumentsDto();

@@ -35,7 +35,7 @@ class DocumentsProvider implements ProviderInterface
         $this->toDate = $this->requestStack->getCurrentRequest()->attributes->get('dateTo');
         $this->userId = $this->requestStack->getCurrentRequest()->query->get('userId');
         $this->userDb = $this->userRepository->findOneById($this->userId);
-        $this->limit = $this->requestStack->getCurrentRequest()->query->get('limit');
+        $this->limit = $this->requestStack->getCurrentRequest()->query->get('limit') ?? 10;
 
 
 //        $this->documentItemType = $this->requestStack->getCurrentRequest()->query->get('documentItemType');
@@ -50,12 +50,15 @@ class DocumentsProvider implements ProviderInterface
         if ($operation instanceof CollectionOperationInterface) {
             $currentPage = $this->pagination->getPage($context);
             $result = $this->CollectionHandler($operation,$uriVariables,$context);
-            $totalItems = count($result);
+            $start = ($currentPage - 1) * $this->limit;
+            if($result['slice']){
+                $result['result'] = array_slice($result['result'], $start, $this->limit);
+            }
             return new TraversablePaginator(
-                new \ArrayIterator($result),
+                new \ArrayIterator($result['result']),
                 $currentPage,
                 $this->limit,
-                $totalItems,
+                $result['totalCount'],
             );
         }
         return $this->GetHandler($operation,$uriVariables,$context);
@@ -68,25 +71,68 @@ class DocumentsProvider implements ProviderInterface
         $dateTo = \DateTimeImmutable::createFromFormat($format, $this->toDate);
         $page = $this->pagination->getPage($context);
         if($this->documentType == 'all') {
-            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::ALL, $page, $this->limit)->documents;
+            $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::ALL)->documents;
+            return [
+                "result" => $response,
+                "totalCount" => count($response),
+                'slice' => true
+            ];
         } elseif($this->documentType == 'orders') {
-            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::ORDERS,  $page, $this->limit)->documents;
+            $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::ORDERS)->documents;
+            return [
+                "result" => $response,
+                "totalCount" => count($response),
+                'slice' => true
+            ];
         } elseif($this->documentType == 'priceOffer') {
-            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::PRICE_OFFER,  $page, $this->limit)->documents;
+            $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::PRICE_OFFER)->documents;
+            return [
+                "result" => $response,
+                "totalCount" => count($response),
+                'slice' => true
+            ];
         } elseif($this->documentType == 'deliveryOrder') {
-            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::DELIVERY_ORDER,  $page, $this->limit)->documents;
+            $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::DELIVERY_ORDER)->documents;
+            return [
+                "result" => $response,
+                "totalCount" => count($response),
+                'slice' => true
+            ];
         } elseif($this->documentType == 'aiInvoice') {
-            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::AI_INVOICE,  $page, $this->limit)->documents;
+            $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::AI_INVOICE)->documents;
+            return [
+                "result" => $response,
+                "totalCount" => count($response),
+                'slice' => true
+            ];
         } elseif($this->documentType == 'ciInvoice') {
-            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::CI_INVOICE,  $page, $this->limit)->documents;
-        } elseif($this->documentType == 'returnOrder') {
-            return $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::RETURN_ORDERS,  $page, $this->limit)->documents;
+            $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::CI_INVOICE)->documents;
+            return [
+                "result" => $response,
+                "totalCount" => count($response),
+                'slice' => true
+            ];
+        } elseif($this->documentType == 'returnOrders') {
+            $response = $this->erpManager->GetDocuments($this->userDb , $dateFrom, $dateTo, DocumentsType::RETURN_ORDERS)->documents;
+            return [
+                "result" => $response,
+                "totalCount" => count($response),
+                'slice' => true
+            ];
         } elseif($this->documentType == 'history') {
-            $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page,  $this->limit);
-            return $this->ConvertHistoryToDocumentsDto($history)->documents;
+            $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page, $this->limit);
+            return [
+                "result" => $this->ConvertHistoryToDocumentsDto($history['result'])->documents,
+                "totalCount" => $history['totalCount'],
+                'slice' => false
+            ];
         } elseif($this->documentType == 'draft') {
             $history = $this->historyRepository->historyHandler($dateFrom,$dateTo,$this->userId,$page,  $this->limit ,DocumentsType::DRAFT);
-            return $this->ConvertHistoryToDocumentsDto($history)->documents;
+            return [
+                "result" => $this->ConvertHistoryToDocumentsDto($history['result'])->documents,
+                "totalCount" => $history['totalCount'],
+                'slice' => false
+            ];
         }
     }
 
@@ -137,6 +183,8 @@ class DocumentsProvider implements ProviderInterface
             $obj->documentType = $histoire->getDocumentType();
             $obj->userName = $histoire->getUser()->getName();
             $obj->userExId = $histoire->getUser()->getExtId();
+//            $obj->agentExId = $histoire->getAgent()->getExtId();
+//            $obj->agentName = $histoire->getAgent()->getName();
             $obj->status = $histoire->getOrderStatus();
             $obj->createdAt = $histoire->getCreatedAt();
             $obj->updatedAt = $histoire->getUpdatedAt();

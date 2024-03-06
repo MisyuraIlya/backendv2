@@ -19,20 +19,18 @@ class PriorityDocuments extends Priority
         $this->httpClient = $httpClient;
     }
 
-    public function GetOrders(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo, int $page, int $limit)
+    public function GetOrders(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/ORDERS";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
         $dateTo = $dateTo->format('Y-m-d\TH:i:s.u\Z');
-        $skip = ($page - 1) * $limit;
         $queryParameters = [
             '$filter' => "CURDATE ge $dateFrom and CURDATE le $dateTo",
-            '$skip' => $skip,
-            '$top' => $limit,
+            '$select' => "CDES,CUSTNAME,QPRICE,CURDATE,ORDSTATUSDES,ORDNAME,STATUSDATE,AGENTCODE,AGENTNAME"
         ];
         if ($user) {
             $userExtId = $user->getExtId();
-            if($user == UsersTypes::AGENT || $user == UsersTypes::SUPER_AGENT) {
+            if($user->getRole() == UsersTypes::AGENT || $user->getRole() == UsersTypes::SUPER_AGENT) {
                 $queryParameters['$filter'] .= " and AGENTCODE eq '$userExtId'";
             } else {
                 $queryParameters['$filter'] .= " and CUSTNAME eq '$userExtId'";
@@ -47,6 +45,8 @@ class PriorityDocuments extends Priority
             $dto = new DocumentDto();
             $dto->userName = $itemRec['CDES'];
             $dto->userExId = $itemRec['CUSTNAME'];
+            $dto->agentExId = $itemRec['AGENTCODE'];
+            $dto->agentName = $itemRec['AGENTNAME'];
             $dto->total = $itemRec['QPRICE'];
             $dto->createdAt = $itemRec['CURDATE'];
             $dto->documentType = DocumentsType::ORDERS;
@@ -103,27 +103,25 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetPriceOffer(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo, int $page, int $limit)
+    public function GetPriceOffer(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/CPROF";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
         $dateTo = $dateTo->format('Y-m-d\TH:i:s.u\Z');
-        $skip = ($page - 1) * $limit;
 
         $queryParameters = [
             '$filter' => "PDATE ge $dateFrom and PDATE le $dateTo",
-            '$skip' => $skip,
-            '$top' => $limit,
         ];
 
         if ($user) {
             $userExtId = $user->getExtId();
-            if($user == UsersTypes::AGENT || $user == UsersTypes::SUPER_AGENT) {
+            if($user->getRole() == UsersTypes::AGENT || $user->getRole() == UsersTypes::SUPER_AGENT) {
                 $queryParameters['$filter'] .= " and AGENTCODE eq '$userExtId'";
             } else {
                 $queryParameters['$filter'] .= " and CUSTNAME eq '$userExtId'";
             }
         }
+
 
         $queryString = http_build_query($queryParameters);
         $urlQuery = $endpoint . '?' . $queryString;
@@ -189,17 +187,14 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetDeliveryOrder(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo, int $page, int $limit)
+    public function GetDeliveryOrder(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/DOCUMENTS_D";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
         $dateTo = $dateTo->format('Y-m-d\TH:i:s.u\Z');
-        $skip = ($page - 1) * $limit;
 
         $queryParameters = [
             '$filter' => "CURDATE ge $dateFrom and CURDATE le $dateTo",
-            '$skip' => $skip,
-            '$top' => $limit,
         ];
 
         if ($user) {
@@ -275,26 +270,24 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetAiInvoice(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo, int $page, int $limit)
+    public function GetAiInvoice(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/AINVOICES";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
         $dateTo = $dateTo->format('Y-m-d\TH:i:s.u\Z');
-        $skip = ($page - 1) * $limit;
         $queryParameters = [
             '$filter' => "IVDATE ge $dateFrom and IVDATE le $dateTo",
-            '$skip' => $skip,
-            '$top' => $limit,
         ];
 
         if ($user) {
             $userExtId = $user->getExtId();
-            if($user == UsersTypes::AGENT || $user == UsersTypes::SUPER_AGENT) {
+            if($user->getRole() == UsersTypes::AGENT || $user->getRole() == UsersTypes::SUPER_AGENT) {
                 $queryParameters['$filter'] .= " and AGENTCODE eq '$userExtId'";
             } else {
                 $queryParameters['$filter'] .= " and CUSTNAME eq '$userExtId'";
             }
         }
+
         $queryString = http_build_query($queryParameters);
         $urlQuery = $endpoint . '?' . $queryString;
         $response = $this->GetRequest($urlQuery);
@@ -360,26 +353,24 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetCiInvoice(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo, int $page, int $limit)
+    public function GetCiInvoice(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/CINVOICES";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
         $dateTo = $dateTo->format('Y-m-d\TH:i:s.u\Z');
-        $skip = ($page - 1) * $limit;
         $queryParameters = [
             '$filter' => "IVDATE ge $dateFrom and IVDATE le $dateTo",
-            '$skip' => $skip,
-            '$top' => $limit,
         ];
 
         if ($user) {
             $userExtId = $user->getExtId();
-            if($user == UsersTypes::AGENT || $user == UsersTypes::SUPER_AGENT) {
+            if($user->getRole() == UsersTypes::AGENT || $user->getRole() == UsersTypes::SUPER_AGENT) {
                 $queryParameters['$filter'] .= " and AGENTCODE eq '$userExtId'";
             } else {
                 $queryParameters['$filter'] .= " and CUSTNAME eq '$userExtId'";
             }
         }
+
 
         $queryString = http_build_query($queryParameters);
         $urlQuery = $endpoint . '?' . $queryString;
@@ -444,26 +435,24 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetReturnDocs(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo, int $page, int $limit)
+    public function GetReturnDocs(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/DOCUMENTS_N";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
         $dateTo = $dateTo->format('Y-m-d\TH:i:s.u\Z');
-        $skip = ($page - 1) * $limit;
         $queryParameters = [
             '$filter' => "CURDATE ge $dateFrom and CURDATE le $dateTo",
-            '$skip' => $skip,
-            '$top' => $limit,
         ];
 
         if ($user) {
             $userExtId = $user->getExtId();
-            if($user == UsersTypes::AGENT || $user == UsersTypes::SUPER_AGENT) {
+            if($user->getRole() == UsersTypes::AGENT || $user->getRole() == UsersTypes::SUPER_AGENT) {
                 $queryParameters['$filter'] .= " and AGENTCODE eq '$userExtId'";
             } else {
                 $queryParameters['$filter'] .= " and CUSTNAME eq '$userExtId'";
             }
         }
+
         $queryString = http_build_query($queryParameters);
         $urlQuery = $endpoint . '?' . $queryString;
         $response = $this->GetRequest($urlQuery);

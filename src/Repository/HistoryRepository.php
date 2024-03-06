@@ -41,7 +41,7 @@ class HistoryRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 
-    public function historyHandler(\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, ?string $userId, int $page, int $limit = 10 ,?DocumentsType $documentType = null)
+    public function historyHandler(\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, ?string $userId, int $page, int $limit = 10, ?DocumentsType $documentType = null)
     {
         $entityManager = $this->getEntityManager();
         $queryBuilder = $entityManager->createQueryBuilder();
@@ -60,8 +60,6 @@ class HistoryRepository extends ServiceEntityRepository
             $queryBuilder->andWhere('h.user = :userId');
             $parameters['userId'] = $userId;
         }
-        $queryBuilder->setMaxResults($limit)
-            ->setFirstResult(($page - 1) * $limit);
 
         if ($documentType !== null) {
             $queryBuilder->andWhere('h.documentType = :documentType');
@@ -70,8 +68,21 @@ class HistoryRepository extends ServiceEntityRepository
 
         $queryBuilder->setParameters($parameters);
 
+        $totalCount = (int)$queryBuilder
+            ->select('COUNT(h.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        $queryBuilder->select('h');
+        $queryBuilder->setMaxResults($limit)
+            ->setFirstResult(($page - 1) * $limit);
+
         $histories = $queryBuilder->getQuery()->getResult();
-        return $histories;
+
+        return [
+            'totalCount' => $totalCount,
+            'result' => $histories,
+        ];
     }
 
 

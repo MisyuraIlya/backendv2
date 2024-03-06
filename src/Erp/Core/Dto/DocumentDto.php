@@ -10,6 +10,8 @@ class DocumentDto
     public DocumentsType $documentType;
     public $userName;
     public $userExId;
+    public $agentExId;
+    public $agentName;
     public $status;
     public $createdAt;
     public $updatedAt;
