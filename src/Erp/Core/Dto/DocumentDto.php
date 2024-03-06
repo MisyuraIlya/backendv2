@@ -6,6 +6,7 @@ use App\Enum\DocumentsType;
 
 class DocumentDto
 {
+    public $id;
     public $documentNumber;
     public DocumentsType $documentType;
     public $userName;

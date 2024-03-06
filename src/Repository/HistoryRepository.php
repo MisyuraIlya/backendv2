@@ -86,6 +86,24 @@ class HistoryRepository extends ServiceEntityRepository
     }
 
 
+    public function historyItemHandler(string $historyId)
+    {
+        $entityManager = $this->getEntityManager();
+        $queryBuilder = $entityManager->createQueryBuilder();
+
+        $queryBuilder
+            ->select('h', 'hd') // Include 'hd' to select HistoryDetailed
+            ->from(History::class, 'h')
+            ->leftJoin('h.historyDetaileds', 'hd') // Join with HistoryDetailed
+            ->where('h.id = :historyId')
+            ->setParameter('historyId', $historyId);
+
+        $query = $queryBuilder->getQuery();
+        $result = $query->getSingleResult(); // Assuming there's only one History with the given ID
+
+
+        return $result;
+    }
 //    /**
 //     * @return History[] Returns an array of History objects
 //     */

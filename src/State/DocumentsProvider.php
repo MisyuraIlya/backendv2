@@ -10,6 +10,8 @@ use ApiPlatform\State\ProviderInterface;
 use App\Entity\History;
 use App\Enum\DocumentsType;
 use App\Erp\Core\Dto\DocumentDto;
+use App\Erp\Core\Dto\DocumentItemDto;
+use App\Erp\Core\Dto\DocumentItemsDto;
 use App\Erp\Core\Dto\DocumentsDto;
 use App\Erp\Core\ErpManager;
 use App\Repository\HistoryRepository;
@@ -134,10 +136,9 @@ class DocumentsProvider implements ProviderInterface
 
     private function GetHandler($operation,$uriVariables,$context)
     {
-        if($this->documentType == DocumentsType::HISTORY){
-
-        } else if ($this->documentType == DocumentsType::DRAFT){
-
+        if($this->documentType == DocumentsType::HISTORY || $this->documentType == DocumentsType::DRAFT){
+            $response = $this->historyRepository->historyItemHandler($this->documentNumber);
+            $response = $this->ConvertHistoryItemToDocumentItemsDto($response);
         } else {
             $response = $this->erpManager->GetDocumentsItem($this->documentNumber,$this->documentType);
         }
@@ -181,17 +182,45 @@ class DocumentsProvider implements ProviderInterface
         foreach ($histoires as $histoire) {
             assert($histoire instanceof History);
             $obj = new DocumentDto();
+            $obj->id = $histoire->getId();
             $obj->documentNumber = $histoire->getOrderExtId();
             $obj->documentType = $histoire->getDocumentType();
             $obj->userName = $histoire->getUser()->getName();
             $obj->userExId = $histoire->getUser()->getExtId();
-//            $obj->agentExId = $histoire->getAgent()->getExtId();
-//            $obj->agentName = $histoire->getAgent()->getName();
+            if(!empty( $histoire->getAgent())){
+                $obj->agentExId = $histoire->getAgent()->getExtId();
+                $obj->agentName = $histoire->getAgent()->getName();
+            } else {
+                $obj->agentExId = null;
+                $obj->agentName = null;
+            }
             $obj->status = $histoire->getOrderStatus();
             $obj->createdAt = $histoire->getCreatedAt();
             $obj->updatedAt = $histoire->getUpdatedAt();
             $obj->total = $histoire->getTotal();
             $result->documents[] = $obj;
+        }
+        return $result;
+    }
+
+    private function ConvertHistoryItemToDocumentItemsDto(History $history): DocumentItemsDto
+    {
+        $result = new DocumentItemsDto();
+        $result->totalPriceAfterTax = $history->getTotal();
+        $result->documentType = $history->getDocumentType();
+        $result->totalPrecent = $history->getDiscount();
+        $result->totalAfterDiscount = 0;
+        $result->totalTax = 0;
+        $result->products = [];
+        foreach ($history->getHistoryDetaileds() as $productRec){
+            $obj = new DocumentItemDto();
+            $obj->sku = $productRec->getProduct()->getSku();
+            $obj->title = $productRec->getProduct()->getTitle();
+            $obj->quantity = $productRec->getQuantity();
+            $obj->priceByOne = $productRec->getSinglePrice();
+            $obj->total = $productRec->getTotal();
+            $obj->discount = $productRec->getDiscount();
+            $result->products[] = $obj;
         }
         return $result;
     }

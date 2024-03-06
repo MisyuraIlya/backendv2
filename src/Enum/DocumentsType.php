@@ -32,7 +32,7 @@ enum DocumentsType: string
                 'ENGLISH' => self::PRICE_OFFER
             ],
             'deliveryOrder' => [
-                'HEBREW' => 'deliveryOrder',
+                'HEBREW' =>  self::DELIVERY_ORDER,
                 'ENGLISH' => self::DELIVERY_ORDER
             ],
             'aiInvoice' => [
