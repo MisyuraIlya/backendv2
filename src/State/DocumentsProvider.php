@@ -134,7 +134,13 @@ class DocumentsProvider implements ProviderInterface
 
     private function GetHandler($operation,$uriVariables,$context)
     {
-        $response = $this->erpManager->GetDocumentsItem($this->documentNumber,$this->documentType);
+        if($this->documentType == DocumentsType::HISTORY){
+
+        } else if ($this->documentType == DocumentsType::DRAFT){
+
+        } else {
+            $response = $this->erpManager->GetDocumentsItem($this->documentNumber,$this->documentType);
+        }
         $makats = [];
         foreach ($response->products as &$itemRec){
             $findProd = $this->productRepository->findOneBySkuAndToArray($itemRec->sku);
