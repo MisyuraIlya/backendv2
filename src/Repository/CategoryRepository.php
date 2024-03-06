@@ -163,4 +163,20 @@ class CategoryRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function GetAdminCategories(string $lvl1, string $lvl2)
+    {
+
+        $qb = $this->createQueryBuilder('c');
+        if ($lvl1 !== '0' && $lvl2 == '0') {
+            $qb->andWhere('c.parent = :lvl1')
+                ->setParameter('lvl1', $lvl1);
+        } elseif ($lvl1 !== '0' && $lvl2 !== '0') {
+            $qb->orWhere('c.parent = :lvl2')
+                ->setParameter('lvl2', $lvl2);
+        }  else {
+            $qb->andWhere('c.lvlNumber = 1');
+        }
+        return $qb->getQuery()->getResult();
+    }
+
 }

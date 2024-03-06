@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CategoryRepository;
+use App\State\AdminCategoriesProvider;
 use App\State\CategoriesStateProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -28,6 +29,14 @@ use ApiPlatform\Metadata\Link;
 )]
 #[ApiResource(
     operations: [
+        new GetCollection(
+            uriTemplate: '/adminCategories/{lvl1}/{lvl2}',
+            uriVariables: [
+                'lvl1' => new Link(fromClass: Category::class),
+                'lvl2' => new Link(fromClass: Category::class),
+            ],
+            provider: AdminCategoriesProvider::class,
+        ),
         new GetCollection(
             uriTemplate: '/categoriesApp',
             provider: CategoriesStateProvider::class

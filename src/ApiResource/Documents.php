@@ -17,7 +17,6 @@ use ApiPlatform\Metadata\Link;
     shortName: 'Documents',
     operations: [
         new GetCollection(
-//            description: '/documents?userExId=41104111&from=2023-02-10&to=2023-03-10&documentType=orders&limit=10',
             uriTemplate: '/documents/{documentType}/{dateFrom}/{dateTo}',
             uriVariables: [
                 'documentType' => new Link(fromClass: DocumentsType::class),

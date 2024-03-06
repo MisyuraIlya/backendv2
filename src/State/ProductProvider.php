@@ -78,9 +78,9 @@ class ProductProvider implements ProviderInterface
     private function GetDbData($onlineMigvan)
     {
         $documentType = (string) $this->requestStack->getCurrentRequest()->attributes->get('documentType');
-        $lvl1 = (string) $this->requestStack->getCurrentRequest()->attributes->get('lvl1');
-        $lvl2 = (float) $this->requestStack->getCurrentRequest()->attributes->get('lvl2');
-        $lvl3 = (float) $this->requestStack->getCurrentRequest()->attributes->get('lvl3');
+        $lvl1 =  $this->requestStack->getCurrentRequest()->attributes->get('lvl1');
+        $lvl2 =  $this->requestStack->getCurrentRequest()->attributes->get('lvl2');
+        $lvl3 =  $this->requestStack->getCurrentRequest()->attributes->get('lvl3');
         $orderBy =  $this->requestStack->getCurrentRequest()->get('orderBy');
         $userExtId =  $this->requestStack->getCurrentRequest()->get('userExtId');
         $page = (int)  $this->requestStack->getCurrentRequest()->get('page', 1);
