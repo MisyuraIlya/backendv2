@@ -81,7 +81,7 @@ class ErpManager implements ErpInterface
     {
         return $this->erp->GetMigvanOnline($userExtId);
     }
-    public function GetDocuments(User $user ,\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentType): DocumentsDto
+    public function GetDocuments(?User $user ,\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentType): DocumentsDto
     {
 
         return $this->erp->GetDocuments($user, $dateFrom,$dateTo, $documentType);

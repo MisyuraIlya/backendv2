@@ -208,28 +208,31 @@ class AuthController extends AbstractController
         try {
             $data = json_decode($request->getContent(), true);
             $id = $data['id'];
-            $extId = $data['extId'];
-            $email = $data['email'];
-            $password = $data['passwordUnencrypted'];
-            $phone = $data['phone'];
-            $name = $data['name'];
-            $isAllowOrder = $data['isAllowOrder'];
-            $isAllowClients = $data['isAllowAllClients'];
-            $isBlocked = $data['isBlocked'];
-            $role = $data['role'];
+            $extId = $data['extId'] ?? null;
+            $email = $data['email'] ?? null;
+            $password = $data['passwordUnencrypted'] ?? null;
+            $phone = $data['phone'] ?? null;
+            $name = $data['name'] ?? null;
+            $isAllowOrder = $data['isAllowOrder'] ?? false;
+            $isAllowClients = $data['isAllowAllClients']  ?? false;
+            $isBlocked = $data['isBlocked']  ?? false;
+            $isRegistered = $data['isRegistered']  ?? false;
+            $role = $data['role'] ?? UsersTypes::USER;
             if($role == 'ROLE_AGENT'){
                 $role = UsersTypes::AGENT;
             } else if($role == 'ROLE_USER'){
                 $role = UsersTypes::USER;
             } else if($role == 'ROLE_SUPER_AGENT') {
                 $role = UsersTypes::SUPER_AGENT;
+            } else {
+                $role = UsersTypes::AGENT;
             }
             $findUser = $this->repository->findOneById($id);
             if(!$findUser) throw new \Exception('לא נמצא לקוח');
 
-
             $findUser->setExtId($extId);
             $findUser->setName($name);
+            $findUser->setIsRegistered($isRegistered);
             $findUser->setUpdatedAt(new \DateTimeImmutable());
             $findUser->setIsBlocked($isBlocked);
             $findUser->setRole($role);
@@ -245,7 +248,11 @@ class AuthController extends AbstractController
 
             $findUser->setIsAllowAllClients($isAllowClients);
             $findUser->setIsAllowOrder($isAllowOrder);
-            $this->repository->createUser($findUser,true);
+            try {
+                $this->repository->createUser($findUser,true);
+            } catch (\Exception $exception){
+                throw new \Exception('לקוח עם מייל כזה נמצא');
+            }
 
             return $this->json((new ApiResponse(null,"יוזר עודכן בהצלחה!"))->OnSuccess());
         } catch (\Exception $e) {

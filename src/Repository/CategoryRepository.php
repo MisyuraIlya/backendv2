@@ -176,7 +176,7 @@ class CategoryRepository extends ServiceEntityRepository
         }  else {
             $qb->andWhere('c.lvlNumber = 1');
         }
-        return $qb->getQuery()->getResult();
+        return $qb->orderBy('c.orden', 'ASC')->getQuery()->getResult();
     }
 
 }

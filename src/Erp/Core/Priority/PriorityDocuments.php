@@ -19,7 +19,7 @@ class PriorityDocuments extends Priority
         $this->httpClient = $httpClient;
     }
 
-    public function GetOrders(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
+    public function GetOrders(?User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/ORDERS";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
@@ -103,7 +103,7 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetPriceOffer(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
+    public function GetPriceOffer(?User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/CPROF";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
@@ -187,7 +187,7 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetDeliveryOrder(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
+    public function GetDeliveryOrder(?User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/DOCUMENTS_D";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
@@ -270,7 +270,7 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetAiInvoice(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
+    public function GetAiInvoice(?User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/AINVOICES";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
@@ -353,7 +353,7 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetCiInvoice(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
+    public function GetCiInvoice(?User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/CINVOICES";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');
@@ -435,7 +435,7 @@ class PriorityDocuments extends Priority
         return $result;
     }
 
-    public function GetReturnDocs(User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
+    public function GetReturnDocs(?User $user, \DateTimeImmutable $dateFrom , \DateTimeImmutable $dateTo)
     {
         $endpoint = "/DOCUMENTS_N";
         $dateFrom = $dateFrom->format('Y-m-d\TH:i:s.u\Z');

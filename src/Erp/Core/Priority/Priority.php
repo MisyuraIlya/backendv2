@@ -171,7 +171,7 @@ class Priority implements ErpInterface
     /**
      * PRIORITY DOSENT SUPPORT FULL PAGINATION LIKE $COUNT=TRUE and because we cant fetch totalItems there no pagination
      */
-    public function GetDocuments(User $user,\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentsType): DocumentsDto
+    public function GetDocuments(?User $user,\DateTimeImmutable $dateFrom, \DateTimeImmutable $dateTo, DocumentsType $documentsType): DocumentsDto
     {
         $order = [];
         $offers = [];
