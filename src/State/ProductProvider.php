@@ -41,23 +41,22 @@ class ProductProvider implements ProviderInterface
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
         $migvanOnline = null;
-        $userExtId =  $this->requestStack->getCurrentRequest()->get('userExtId');
-
-        if($userExtId && $userExtId!== 'null'){
-            $userDb = $this->userRepository->findFirstExtId($userExtId);
+        $userId =  $this->requestStack->getCurrentRequest()->get('userId');
+        if($userId && $userId!== 'null'){
+            $userDb = $this->userRepository->findParentUser($userId);
         } else {
             $userDb = '';
         }
 
-        if($this->isOnlineMigvan && $userExtId && $this->isUsedMigvan){
-            $migvanOnline = $this->erpManager->GetMigvanOnline($userExtId)->migvans;
+        if($this->isOnlineMigvan && $userId && $this->isUsedMigvan){
+            $migvanOnline = $this->erpManager->GetMigvanOnline($userId)->migvans;
         }
 
         $data = $this->GetDbData($migvanOnline);
         assert($data instanceof Paginator);
 
-        if($this->isOnlinePrice && count($data) >0 && $userExtId && $userExtId!== 'null') {
-            $this->GetOnlinePrice($data,$userDb, $userExtId);
+        if($this->isOnlinePrice && count($data) >0 && $userId && $userId!== 'null') {
+            $this->GetOnlinePrice($data,$userDb, $userId);
         } else {
             $this->GetDbPrice($data);
         }
