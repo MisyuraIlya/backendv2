@@ -5,8 +5,13 @@ namespace App\Entity;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Link;
+use App\Enum\CatalogDocumentTypeEnum;
 use App\Enum\UsersTypes;
 use App\Repository\UserRepository;
+use App\State\AgentClientsProvider;
+use App\State\ProductProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -16,6 +21,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
+
+#[ApiResource(
+    operations: [
+        new GetCollection(
+            uriTemplate: '/agentClients/{agentId}',
+            uriVariables: [
+                'agentId' => new Link(fromClass: User::class),
+            ],
+            paginationClientItemsPerPage: true,
+            normalizationContext: [
+                'groups' => ['userAgent:read'],
+            ],
+            denormalizationContext: [
+                'groups' => ['userAgent:write'],
+            ],
+            provider: AgentClientsProvider::class,
+        )
+    ],
+)]
+
 #[ApiResource(
     normalizationContext: [
         'groups' => ['user:read'],
@@ -25,9 +50,10 @@ use ApiPlatform\Doctrine\Orm\Filter\BooleanFilter;
 #[ApiFilter(
     SearchFilter::class,
     properties: [
+        'id' => 'exact',
         'name' => 'partial',
         'extId' => 'partial',
-        'role' => 'exact'
+        'role' => 'exact',
     ]
 )]
 
@@ -39,11 +65,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true, nullable: true)]
-    #[Groups(['user:read','agentTarget:read'])]
+    #[Groups(['user:read','agentTarget:read','userAgent:read'])]
     private ?string $email = null;
 
     #[Groups(['user:read','agentTarget:read'])]
@@ -57,31 +83,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     private ?bool $isRegistered = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     private ?string $extId = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     private ?bool $isBlocked = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -102,7 +128,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: AgentObjective::class)]
     private Collection $clientObjectives;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?UsersTypes $role = null;
 
@@ -122,27 +148,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PriceListUser::class)]
     private Collection $priceListUsers;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $payCode = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $PayDes = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     #[ORM\Column(nullable: true)]
     private ?float $maxCredit = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     #[ORM\Column(nullable: true)]
     private ?float $maxObligo = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hp = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $taxCode = null;
 
@@ -152,9 +178,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: self::class)]
     private Collection $users;
 
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'usersAgent')]
+    private ?self $agent = null;
+
+    #[ORM\OneToMany(mappedBy: 'agent', targetEntity: self::class)]
+    private Collection $usersAgent;
+
     #[Groups(['user:read','agentTarget:read'])]
     #[ORM\Column]
     private ?bool $isAgent = null;
+
+
 
     public function __construct()
     {
@@ -166,6 +200,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->priceListUsers = new ArrayCollection();
         $this->atar = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->usersAgent = new ArrayCollection();
     }
 
 
@@ -686,6 +721,48 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsAgent(bool $isAgent): static
     {
         $this->isAgent = $isAgent;
+
+        return $this;
+    }
+
+    public function getAgentId(): ?self
+    {
+        return $this->agent;
+    }
+
+    public function setAgentId(?self $agent): static
+    {
+        $this->agent = $agent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getUsersAgent(): Collection
+    {
+        return $this->usersAgent;
+    }
+
+    public function addUsersAgent(self $usersAgent): static
+    {
+        if (!$this->usersAgent->contains($usersAgent)) {
+            $this->usersAgent->add($usersAgent);
+            $usersAgent->setAgentId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUsersAgent(self $usersAgent): static
+    {
+        if ($this->usersAgent->removeElement($usersAgent)) {
+            // set the owning side to null (unless already changed)
+            if ($usersAgent->getAgentId() === $this) {
+                $usersAgent->setAgentId(null);
+            }
+        }
 
         return $this;
     }

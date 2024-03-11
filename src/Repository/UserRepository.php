@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use ApiPlatform\Doctrine\Orm\Paginator;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -144,6 +146,35 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $migvans = $user->getMigvans();
 
         return $migvans->count() > 0;
+    }
+
+    public function GetAgentClients(string $agentId, int $page = 1, int $usersPerPage = 50, ?string $search = null): Paginator
+    {
+        $queryBuilder = $this->createQueryBuilder('u');
+        $queryBuilder
+            ->where('u.parent IS NULL')
+            ->andWhere('u.agent = :agentId')
+            ->setParameter('agentId', $agentId);
+
+        if ($search !== null) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->orX(
+                    $queryBuilder->expr()->like('u.extId', ':search'),
+                    $queryBuilder->expr()->like('u.name', ':search')
+                ))
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        $offset = ($page - 1) * $usersPerPage;
+
+        $doctrinePaginator = new DoctrinePaginator($queryBuilder);
+        $doctrinePaginator->getQuery()
+            ->setFirstResult($offset)
+            ->setMaxResults($usersPerPage);
+
+        $paginator = new Paginator($doctrinePaginator);
+
+        return $paginator;
     }
 
 //    /**
