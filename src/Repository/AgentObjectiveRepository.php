@@ -27,6 +27,9 @@ class AgentObjectiveRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('ao');
 
         $missions = $qb
+            ->select('ao', 'agent', 'client')
+            ->leftJoin('ao.agent', 'agent')
+            ->leftJoin('ao.client', 'client')
             ->andWhere('ao.agent = :agentId')
             ->setParameter('agentId', $agentId)
             ->andWhere($qb->expr()->gte('ao.date', ':weekFrom'))

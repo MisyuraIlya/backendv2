@@ -81,12 +81,12 @@ class AgentObjective
     private ?bool $week4 = null;
 
     #[Groups(['agentObjective:read'])]
-    #[ORM\Column(type: "time", nullable: true)]
-    private ?\DateTimeInterface $hourFrom = null;
+    #[ORM\Column(nullable: true)]
+    private ?string $hourFrom = null;
 
     #[Groups(['agentObjective:read'])]
-    #[ORM\Column(type: "time", nullable: true)]
-    private ?\DateTimeInterface $hourTo = null;
+    #[ORM\Column(nullable: true)]
+    private ?string  $hourTo = null;
 
     #[Groups(['agentObjective:read'])]
     #[ORM\Column(length: 255, nullable: true)]
@@ -237,12 +237,12 @@ class AgentObjective
         return $this;
     }
 
-    public function getHourFrom(): ?\DateTimeInterface
+    public function getHourFrom(): ?string
     {
         return $this->hourFrom;
     }
 
-    public function setHourFrom(?\DateTimeInterface $hourFrom): static
+    public function setHourFrom(?string  $hourFrom): static
     {
         $this->hourFrom = $hourFrom;
 
@@ -250,12 +250,12 @@ class AgentObjective
     }
 
 
-    public function getHourTo(): ?\DateTimeInterface
+    public function getHourTo(): ?string
     {
         return $this->hourTo;
     }
 
-    public function setHourTo(?\DateTimeInterface $hourTo): static
+    public function setHourTo(?string  $hourTo): static
     {
         $this->hourTo = $hourTo;
 
