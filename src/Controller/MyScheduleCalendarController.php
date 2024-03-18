@@ -39,35 +39,7 @@ class MyScheduleCalendarController extends AbstractController
         }
 
         $flattened = $this->flattenArray($newArr);
-
-        $serializedData = [];
-        foreach ($flattened as $agentObjective){
-            $agent = $agentObjective->getAgent();
-            $client = $agentObjective->getClient();
-
-            $serializedData[] = [
-                'id' => $agentObjective->getId(),
-                'agent' => $agent,
-                'client' => $client,
-                'isCompleted' => $agentObjective->isIsCompleted(),
-                'completedAt' => $agentObjective->getCompletedAt(),
-                'title' => $agentObjective->getTitle(),
-                'description' => $agentObjective->getDescription(),
-                'week1' => $agentObjective->isWeek1(),
-                'week2' => $agentObjective->isWeek2(),
-                'week3' => $agentObjective->isWeek3(),
-                'week4' => $agentObjective->isWeek4(),
-                'hourFrom' => $agentObjective->getHourFrom(),
-                'hourTo' => $agentObjective->getHourTo(),
-                'choosedDay' => $agentObjective->getChoosedDay(),
-                'date' => $agentObjective->getDate(),
-                'createdAt' => $agentObjective->getCreatedAt(),
-                'updatedAt' => $agentObjective->getUpdatedAt(),
-                'objectiveType' => $agentObjective->getObjectiveType(),
-                // Include other properties as needed
-            ];
-        }
-        return $this->json((new ApiResponse($serializedData,"נשלח קוד סודי לאימות"))->OnSuccess());
+        return $this->json((new ApiResponse($flattened,"נשלח קוד סודי לאימות"))->OnSuccess());
 
     }
 

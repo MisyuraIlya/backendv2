@@ -336,6 +336,7 @@ class AgentObjective
             $newObj->agent = $itemRec->getAgent();
             $newObj->client = $itemRec->getClient();
             $newObj->isCompleted = $itemRec->isIsCompleted();
+            $newObj->completedAt = $itemRec->getCompletedAt();
             $newObj->title = $itemRec->getTitle();
             $newObj->description = $itemRec->getDescription();
             $newObj->week1 = $itemRec->isWeek1();
