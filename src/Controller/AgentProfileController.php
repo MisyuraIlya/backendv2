@@ -15,13 +15,15 @@ class AgentProfileController extends AbstractController
         $this->agendId = $agentId;
 
         $res = [
+            "totalPriceMonth" => 0,
             "totalPriceYear" => 0,
-            "totalCountYear" => 0,
-            "averageTotalYear"  => 0,
+            "averageBasket"  => 0,
             "totalClients" => 0,
+
             "totalPriceDay" => 0,
             "totalDayCount" => 100,
-            "totalPriceMonth" => 0,
+
+            "totalMissions" => 0,
             "targetPrecent" => 0,
         ];
 

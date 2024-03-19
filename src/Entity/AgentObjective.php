@@ -30,7 +30,8 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     properties: [
         'agent.id' => 'exact',
         'objectiveType' => 'exact',
-        'client.extId' => 'partial'
+        'client.extId' => 'partial',
+        'client.name' => 'partial'
     ]
 )]
 
