@@ -65,14 +65,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true, nullable: true)]
-    #[Groups(['user:read','agentTarget:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','userAgent:read','notificationUser:read'])]
     private ?string $email = null;
 
-    #[Groups(['user:read','agentTarget:read'])]
+    #[Groups(['user:read','agentTarget:read','notificationUser:read'])]
     #[ORM\Column]
     private array $roles = [];
 
@@ -83,31 +83,31 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     private ?bool $isRegistered = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     private ?string $phone = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','history:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     private ?string $extId = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     private ?bool $isBlocked = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -128,47 +128,47 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'client', targetEntity: AgentObjective::class)]
     private Collection $clientObjectives;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?UsersTypes $role = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $passwordUnencrypted = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','notificationUser:read'])]
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private ?bool $isAllowOrder = false;
 
 
-    #[Groups(['user:read', 'agentTarget:read', 'agentObjective:read'])]
+    #[Groups(['user:read', 'agentTarget:read', 'agentObjective:read','notificationUser:read'])]
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private ?bool $isAllowAllClients = false;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PriceListUser::class)]
     private Collection $priceListUsers;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $payCode = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $PayDes = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     #[ORM\Column(nullable: true)]
     private ?float $maxCredit = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     #[ORM\Column(nullable: true)]
     private ?float $maxObligo = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $hp = null;
 
-    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read'])]
+    #[Groups(['user:read','agentTarget:read','agentObjective:read','userAgent:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $taxCode = null;
 
@@ -184,9 +184,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'agent', targetEntity: self::class)]
     private Collection $usersAgent;
 
-    #[Groups(['user:read','agentTarget:read'])]
+    #[Groups(['user:read','agentTarget:read','notificationUser:read'])]
     #[ORM\Column]
     private ?bool $isAgent = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: NotificationUser::class)]
+    private Collection $notificationUsers;
 
 
 
@@ -201,6 +204,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->atar = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->usersAgent = new ArrayCollection();
+        $this->notificationUsers = new ArrayCollection();
     }
 
 
@@ -761,6 +765,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($usersAgent->getAgentId() === $this) {
                 $usersAgent->setAgentId(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, NotificationUser>
+     */
+    public function getNotificationUsers(): Collection
+    {
+        return $this->notificationUsers;
+    }
+
+    public function addNotificationUser(NotificationUser $notificationUser): static
+    {
+        if (!$this->notificationUsers->contains($notificationUser)) {
+            $this->notificationUsers->add($notificationUser);
+            $notificationUser->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotificationUser(NotificationUser $notificationUser): static
+    {
+        if ($this->notificationUsers->removeElement($notificationUser)) {
+            // set the owning side to null (unless already changed)
+            if ($notificationUser->getUser() === $this) {
+                $notificationUser->setUser(null);
             }
         }
 

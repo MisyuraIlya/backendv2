@@ -6,6 +6,8 @@ use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
 use App\Repository\NotificationRepository;
 use App\State\SendNotificationProcessor;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -56,6 +58,14 @@ class Notification
     #[Groups(['notification:read'])]
     #[ORM\Column]
     private ?bool $isPublished = null;
+
+    #[ORM\OneToMany(mappedBy: 'notification', targetEntity: NotificationUser::class)]
+    private Collection $notificationUsers;
+
+    public function __construct()
+    {
+        $this->notificationUsers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -154,6 +164,36 @@ class Notification
     public function setIsPublished(bool $isPublished): static
     {
         $this->isPublished = $isPublished;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, NotificationUser>
+     */
+    public function getNotificationUsers(): Collection
+    {
+        return $this->notificationUsers;
+    }
+
+    public function addNotificationUser(NotificationUser $notificationUser): static
+    {
+        if (!$this->notificationUsers->contains($notificationUser)) {
+            $this->notificationUsers->add($notificationUser);
+            $notificationUser->setNotification($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotificationUser(NotificationUser $notificationUser): static
+    {
+        if ($this->notificationUsers->removeElement($notificationUser)) {
+            // set the owning side to null (unless already changed)
+            if ($notificationUser->getNotification() === $this) {
+                $notificationUser->setNotification(null);
+            }
+        }
 
         return $this;
     }

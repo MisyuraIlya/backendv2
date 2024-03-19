@@ -177,6 +177,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $paginator;
     }
 
+    public function GetUnregisteredUsers()
+    {
+
+        return $this->createQueryBuilder('u')
+            ->where('u.isBlocked = false')
+            ->andWhere('u.isRegistered = true')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function GetAllAgents()
+    {
+
+        return $this->createQueryBuilder('u')
+            ->where('u.isAgent = true')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
