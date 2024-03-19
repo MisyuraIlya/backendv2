@@ -15,7 +15,6 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
-
 #[ApiResource(
     normalizationContext: [
         'groups' => ['agentObjective:read'],
@@ -23,7 +22,9 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
     ],
     paginationClientItemsPerPage: true,
 )]
+
 #[ORM\Entity(repositoryClass: AgentObjectiveRepository::class)]
+
 #[ApiFilter(
     SearchFilter::class,
     properties: [
@@ -32,6 +33,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
         'client.extId' => 'partial'
     ]
 )]
+
 #[ApiFilter(DateFilter::class, properties: ['date'])]
 class AgentObjective
 {
