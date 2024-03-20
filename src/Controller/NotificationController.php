@@ -52,6 +52,7 @@ class NotificationController extends AbstractController
             $newNotificationUser->setUser($userRec);
             $newNotificationUser->setNotification($notification);
             $newNotificationUser->setIsRead(false);
+            $newNotificationUser->setCreatedAt(new \DateTimeImmutable());
             $this->notificationUserRepository->save($newNotificationUser,true);
         }
         return 'ok';
@@ -66,6 +67,7 @@ class NotificationController extends AbstractController
             $newNotificationUser->setUser($userRec);
             $newNotificationUser->setNotification($notification);
             $newNotificationUser->setIsRead(false);
+            $newNotificationUser->setCreatedAt(new \DateTimeImmutable());
             $this->notificationUserRepository->save($newNotificationUser,true);
         }
         return 'ok';

@@ -24,38 +24,38 @@ class Notification
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     private ?int $id = null;
 
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $title = null;
 
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $link = null;
 
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     #[ORM\Column]
     private ?bool $isSend = null;
 
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     #[ORM\ManyToOne(inversedBy: 'notifications')]
     private ?MediaObject $image = null;
 
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     #[ORM\Column]
     private ?bool $isPublic = null;
 
-    #[Groups(['notification:read'])]
+    #[Groups(['notification:read','notificationUser:read'])]
     #[ORM\Column]
     private ?bool $isPublished = null;
 

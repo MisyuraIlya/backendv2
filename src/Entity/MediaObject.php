@@ -75,7 +75,7 @@ class MediaObject
     #[Assert\NotNull(groups: ['media_object_create'])]
     public ?File $file = null;
 
-    #[Groups(['product:read','category:read','productImages:read','notification:read'])]
+    #[Groups(['product:read','category:read','productImages:read','notification:read','notificationUser:read'])]
     #[ORM\Column(nullable: true)]
     public ?string $filePath = null;
 

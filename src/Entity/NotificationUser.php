@@ -30,6 +30,7 @@ class NotificationUser
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['notificationUser:read'])]
     private ?int $id = null;
 
     #[Groups(['notificationUser:read'])]
@@ -43,6 +44,9 @@ class NotificationUser
     #[Groups(['notificationUser:read'])]
     #[ORM\Column]
     private ?bool $isRead = null;
+    #[Groups(['notificationUser:read'])]
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
 
     public function getId(): ?int
     {
@@ -81,6 +85,18 @@ class NotificationUser
     public function setIsRead(bool $isRead): static
     {
         $this->isRead = $isRead;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
