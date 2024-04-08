@@ -51,6 +51,7 @@ final class UserFactory extends ModelFactory
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'isBlocked' => false,
             'isRegistered' => false,
+            'isAgent' => false,
             'password' => null,
             'roles' => UsersTypes::USER,
             'updatedAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
