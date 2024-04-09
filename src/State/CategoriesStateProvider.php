@@ -28,7 +28,13 @@ class CategoriesStateProvider implements ProviderInterface
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
     {
+        try {
             $response = $this->categoryRepository->GetAppCategories();
             return $response;
+        } catch (\Throwable $exception) {
+            $obj = new \stdClass();
+            $obj->error = $exception->getMessage();
+            return $obj;
+        }
     }
 }
