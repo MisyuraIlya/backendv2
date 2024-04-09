@@ -38,7 +38,7 @@ class AuthController extends AbstractController
             $token = $data['token'];
 
             $findUser = $this->repository->findOneByExIdAndPhone($exId, $phone);
-
+            if(!$findUser) throw new \Exception('לא נמצא לקוח');
             if($findUser->getIsBlocked()) throw new \Exception('לקוח חסום');
             if($findUser->getIsRegistered()) throw new \Exception('לקוח רשום');
             if($findUser->getRecovery() != $token) throw new \Exception('קוד סודי שגוי');
@@ -67,6 +67,7 @@ class AuthController extends AbstractController
             $exId = $data['exId'];
             $phone = $data['phone'];
             $findUser = $this->repository->findOneByExIdAndPhone($exId, $phone);
+            if(!$findUser) throw new \Exception('לא נמצא לקוח');
             $recovery = random_int(100000,900000);
             $findUser->setRecovery($recovery);
             $this->repository->createUser($findUser,true);
