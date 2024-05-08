@@ -87,6 +87,15 @@ class ProductProvider implements ProviderInterface
         $attributes =  $this->requestStack->getCurrentRequest()->get('attributes');
         $searchValue = $this->requestStack->getCurrentRequest()->get('search');
         $makatsForSearch = [];
+
+        if($documentType == 'recommended'){
+            $makatsForSearch = $this->HandleRecommended($userExtId);
+        }
+
+        if($documentType == 'new') {
+            $makatsForSearch = $this->HandleNewProducts($userExtId);
+        }
+
         $data = $this->productRepository->getCatalog(
             $page,
             $userExtId,
@@ -100,6 +109,7 @@ class ProductProvider implements ProviderInterface
             $makatsForSearch,
             $documentType
         );
+
         $this->GetSkus($data);
         return $data;
     }
@@ -176,6 +186,24 @@ class ProductProvider implements ProviderInterface
         $this->skus =  $arraySkus;
     }
 
+    private function HandleRecommended($userExtId): array
+    {
+        $mataks = [];
+        $res = $this->productRepository->getRandomProducts();
+        foreach ($res as $itemRec){
+            $mataks[] = $itemRec->getSku();
+        }
+        return $mataks;
+    }
 
+    private function HandleNewProducts($userExtId): array
+    {
+        $mataks = [];
+        $res =  $this->productRepository->getRandomProducts();
+        foreach ($res as $itemRec){
+            $mataks[] = $itemRec->getSku();
+        }
+        return $mataks;
+    }
 
 }

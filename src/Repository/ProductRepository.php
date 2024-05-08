@@ -61,6 +61,14 @@ class ProductRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
+    public function getRandomProducts()
+    {
+        return $this->createQueryBuilder('p')
+            ->setMaxResults(30)
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findOneBySkuAndIdentify(string $sku, string $identify): ?Product
     {
         return $this->createQueryBuilder('c')
