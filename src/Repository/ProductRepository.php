@@ -91,14 +91,18 @@ class ProductRepository extends ServiceEntityRepository
         ?string $attributes,
         ?string $searchValue,
         ?array $makatsForSearch,
-        string $documentType
+        string $documentType,
+        bool $showAll
     ): Paginator
     {
         $firstResult = ($page - 1) * $itemsPerPage;
         $queryBuilder = $this->_em->createQueryBuilder();
         $queryBuilder->select('p')
-            ->from(Product::class, 'p')
-            ->andWhere('p.isPublished = true');
+            ->from(Product::class, 'p');
+
+        if (!$showAll) {
+            $queryBuilder->andWhere("p.isPublished = $showAll");
+        }
 
         if (!empty($makatsForSearch)) {
             $queryBuilder->andWhere($queryBuilder->expr()->in('p.sku', $makatsForSearch));

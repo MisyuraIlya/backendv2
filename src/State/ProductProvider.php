@@ -65,6 +65,7 @@ class ProductProvider implements ProviderInterface
 //                $this->GetOnlineStock($data);
 //            }
 
+
         return new TraversablePaginator(
             new \ArrayIterator($data->getIterator()),
             $data->getCurrentPage(),
@@ -86,6 +87,7 @@ class ProductProvider implements ProviderInterface
         $itemsPerPage = (int)  $this->requestStack->getCurrentRequest()->get('itemsPerPage',24);
         $attributes =  $this->requestStack->getCurrentRequest()->get('attributes');
         $searchValue = $this->requestStack->getCurrentRequest()->get('search');
+        $published = $this->requestStack->getCurrentRequest()->get('showAll',false) == 'true' ;
         $makatsForSearch = [];
 
         if($documentType == 'recommended'){
@@ -107,7 +109,8 @@ class ProductProvider implements ProviderInterface
             $attributes,
             $searchValue,
             $makatsForSearch,
-            $documentType
+            $documentType,
+            $published
         );
 
         $this->GetSkus($data);

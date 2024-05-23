@@ -30,7 +30,6 @@ class ProductImages
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['product:read','category:read','productImages:read','restoreCart:read'])]
     #[ORM\ManyToOne(inversedBy: 'imagePath')]
     private ?Product $product = null;
 
