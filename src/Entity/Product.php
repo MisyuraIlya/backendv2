@@ -165,6 +165,14 @@ class Product
     #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductPack::class)]
     private Collection $packProducts;
 
+    #[Groups(['product:read','category:read','product:write','historyDetailed:read','history:read','restoreCart:read'])]
+    #[ORM\Column]
+    private ?bool $isNew = null;
+
+    #[Groups(['product:read','category:read','product:write','historyDetailed:read','history:read','restoreCart:read'])]
+    #[ORM\Column]
+    private ?bool $isSpecial = null;
+
     public function __construct()
     {
         $this->imagePath = new ArrayCollection();
@@ -528,6 +536,30 @@ class Product
                 $packProduct->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isIsNew(): ?bool
+    {
+        return $this->isNew;
+    }
+
+    public function setIsNew(bool $isNew): static
+    {
+        $this->isNew = $isNew;
+
+        return $this;
+    }
+
+    public function isIsSpecial(): ?bool
+    {
+        return $this->isSpecial;
+    }
+
+    public function setIsSpecial(bool $isSpecial): static
+    {
+        $this->isSpecial = $isSpecial;
 
         return $this;
     }
