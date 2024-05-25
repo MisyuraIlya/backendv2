@@ -6,5 +6,6 @@ enum CatalogDocumentTypeEnum: string
 {
     case CATALOG = 'catalog';
     case SEARCH = 'search';
-    case RECOMMENDED = 'recommended';
+    case SPECIAL = 'special';
+    case NEW = 'new';
 }

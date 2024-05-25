@@ -4,28 +4,17 @@ namespace App\Erp\Core\Dto;
 
 class CartessetLineDto
 {
-    public ?int $Balance;
-    public ?string $BatchNo;
+    public ?string $createdAt;
+    public ?string $tnua;
+    public ?string $asmahta1;
 
-    public ?string $Description;
+    public ?string $dateEreh;
 
-    public ?string $DueDate;
+    public ?string $description;
 
-    public ?string $ID;
+    public ?string $hova;
 
-    public ?string $Ref2;
+    public ?string $zhut;
 
-    public ?string $Referance;
-
-    public ?bool $Show;
-
-    public ?string $TransCredID;
-
-    public ?string $TransID;
-
-    public ?string $TransType;
-
-    public ?string $ValueDate;
-
-    public ?int $suF;
+    public ?string $yetra;
 }

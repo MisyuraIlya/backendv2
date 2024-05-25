@@ -152,8 +152,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $queryBuilder = $this->createQueryBuilder('u');
         $queryBuilder
-            ->where('u.parent IS NULL')
-            ->andWhere('u.agent = :agentId')
+            ->where('u.agent = :agentId')
             ->setParameter('agentId', $agentId);
 
         if ($search !== null) {

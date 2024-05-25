@@ -10,6 +10,7 @@ use ApiPlatform\State\Pagination\TraversablePaginator;
 use ApiPlatform\State\ProviderInterface;
 use App\Entity\Product;
 use App\Entity\User;
+use App\Enum\CatalogDocumentTypeEnum;
 use App\Erp\Core\ErpManager;
 use App\Repository\PriceListUserRepository;
 use App\Repository\ProductRepository;
@@ -87,33 +88,30 @@ class ProductProvider implements ProviderInterface
         $itemsPerPage = (int)  $this->requestStack->getCurrentRequest()->get('itemsPerPage',24);
         $attributes =  $this->requestStack->getCurrentRequest()->get('attributes');
         $searchValue = $this->requestStack->getCurrentRequest()->get('search');
-        $published = $this->requestStack->getCurrentRequest()->get('showAll',false) == 'true' ;
+        $isShowAll = $this->requestStack->getCurrentRequest()->get('showAll',false) == 'true' ;
         $makatsForSearch = [];
 
-        if($documentType == 'recommended'){
-            $makatsForSearch = $this->HandleRecommended($userExtId);
+
+        if($documentType == CatalogDocumentTypeEnum::SPECIAL->value){
+            $makatsForSearch = $this->HandleSpecial($userExtId);
         }
 
-        if($documentType == 'new') {
+        if($documentType ==  CatalogDocumentTypeEnum::NEW->value) {
             $makatsForSearch = $this->HandleNewProducts($userExtId);
         }
 
         $data = $this->productRepository->getCatalog(
             $page,
-            $userExtId,
             $itemsPerPage,
             $lvl1,
             $lvl2,
             $lvl3,
+            $isShowAll,
             $orderBy,
             $attributes,
             $searchValue,
             $makatsForSearch,
-            $documentType,
-            $published
         );
-
-        $this->GetSkus($data);
         return $data;
     }
 
@@ -180,19 +178,11 @@ class ProductProvider implements ProviderInterface
         }
     }
 
-    private function GetSkus(Paginator $data)
-    {
-        $arraySkus = [];
-        foreach ($data as $entity) {
-            $arraySkus[] = $entity->getSku();
-        }
-        $this->skus =  $arraySkus;
-    }
 
-    private function HandleRecommended($userExtId): array
+    private function HandleSpecial($userExtId): array
     {
         $mataks = [];
-        $res = $this->productRepository->getRandomProducts();
+        $res = $this->productRepository->getSpecialProducts();
         foreach ($res as $itemRec){
             $mataks[] = $itemRec->getSku();
         }
@@ -202,7 +192,7 @@ class ProductProvider implements ProviderInterface
     private function HandleNewProducts($userExtId): array
     {
         $mataks = [];
-        $res =  $this->productRepository->getRandomProducts();
+        $res =  $this->productRepository->getNewProducts();
         foreach ($res as $itemRec){
             $mataks[] = $itemRec->getSku();
         }

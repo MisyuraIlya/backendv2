@@ -15,8 +15,9 @@ class CartessetProvider implements ProviderInterface
         private readonly ErpManager $erpManager,
     )
     {
-        $this->fromDate = $this->requestStack->getCurrentRequest()->query->get('from');
-        $this->toDate = $this->requestStack->getCurrentRequest()->query->get('to');
+        $this->fromDate= $this->requestStack->getCurrentRequest()->attributes->get('dateFrom');
+        $this->toDate = $this->requestStack->getCurrentRequest()->attributes->get('dateTo');
+        $this->userExtId = $this->requestStack->getCurrentRequest()->attributes->get('userExtId');
     }
 
     public function provide(Operation $operation, array $uriVariables = [], array $context = []): object|array|null
@@ -30,9 +31,8 @@ class CartessetProvider implements ProviderInterface
         $format = "Y-m-d";
         $dateFrom = \DateTimeImmutable::createFromFormat($format, $this->fromDate);
         $dateTo = \DateTimeImmutable::createFromFormat($format, $this->toDate);
-
         $response = $this->erpManager->GetCartesset(
-            $uriVariables['userExtId'],
+            $this->userExtId,
             $dateFrom,
             $dateTo,
         );

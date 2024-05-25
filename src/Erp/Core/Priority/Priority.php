@@ -255,17 +255,14 @@ class Priority implements ErpInterface
         foreach ($response as $itemRec) {
             foreach ($itemRec['ACCFNCITEMS2_SUBFORM'] as $subRec){
                 $obj = new CartessetLineDto();
-                $obj->TransID = $subRec['FNCTRANS'] ;
-                $obj->ID = $subRec['FNCNUM'];
-                $obj->TransType = $subRec['DETAILS'];
-                $obj->ValueDate = $subRec['CURDATE'];
-                $obj->DueDate = $subRec['FNCDATE'];
-                $obj->Referance = $subRec['FNCIREF1'];
-                $obj->Ref2 = $subRec['FNCIREF2'];
-                $obj->Description = $subRec['DETAILS'];
-                $obj->suF = $subRec['DEBIT'];
-                $obj->Balance = $subRec['BAL'];
-                $obj->Show = true;
+                $obj->createdAt = $subRec['CURDATE'];
+                $obj->tnua = $subRec['FNCTRANS'];
+                $obj->asmahta1 = $subRec['FNCIREF1'];
+                $obj->dateEreh = $subRec['BALDATE'];
+                $obj->description = $subRec['DETAILS'];
+                $obj->hova = $subRec['DEBIT'];
+                $obj->zhut = $subRec['CREDIT'];
+                $obj->yetra = $subRec['BAL'];
                 $result->lines[] = $obj;
             }
         }

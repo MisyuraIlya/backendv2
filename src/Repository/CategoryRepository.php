@@ -159,6 +159,8 @@ class CategoryRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->where('c.lvlNumber = 1')
+            ->andWhere('c.isPublished = true')
+            ->orderBy('c.orden', 'ASC')
             ->getQuery()
             ->getResult();
     }

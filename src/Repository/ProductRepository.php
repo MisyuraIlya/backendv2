@@ -61,13 +61,6 @@ class ProductRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
-    public function getRandomProducts()
-    {
-        return $this->createQueryBuilder('p')
-            ->setMaxResults(30)
-            ->getQuery()
-            ->getResult();
-    }
 
     public function findOneBySkuAndIdentify(string $sku, string $identify): ?Product
     {
@@ -82,47 +75,45 @@ class ProductRepository extends ServiceEntityRepository
 
     public function getCatalog(
         int $page = 1,
-        string $userExtId = null,
         int $itemsPerPage = 24,
-        string $lvl1,
-        float $lvl2,
-        float $lvl3,
+        ?int $lvl1 = null,
+        ?int $lvl2 = null,
+        ?int $lvl3 = null,
+        bool $showAll = false,
         ?string $orderBy = null,
-        ?string $attributes,
-        ?string $searchValue,
-        ?array $makatsForSearch,
-        string $documentType,
-        bool $showAll
-    ): Paginator
-    {
+        ?string $attributes = null,
+        ?string $searchValue = null,
+        ?array $makatsForSearch = null,
+    ): Paginator {
         $firstResult = ($page - 1) * $itemsPerPage;
         $queryBuilder = $this->_em->createQueryBuilder();
         $queryBuilder->select('p')
             ->from(Product::class, 'p');
 
         if (!$showAll) {
-            $queryBuilder->andWhere("p.isPublished = $showAll");
+            $queryBuilder->andWhere("p.isPublished = :isPublished")
+                ->setParameter('isPublished', true);
         }
 
         if (!empty($makatsForSearch)) {
-            $queryBuilder->andWhere($queryBuilder->expr()->in('p.sku', $makatsForSearch));
+            $queryBuilder->andWhere($queryBuilder->expr()->in('p.sku', ':makatsForSearch'))
+                ->setParameter('makatsForSearch', $makatsForSearch);
         }
 
         if ($lvl1) {
             $queryBuilder->andWhere('p.categoryLvl1 = :lvl1')
                 ->setParameter('lvl1', $lvl1);
-
-            if ($lvl2) {
-                $queryBuilder->andWhere('p.categoryLvl2 = :lvl2')
-                    ->setParameter('lvl2', $lvl2);
-
-                if ($lvl3) {
-                    $queryBuilder->andWhere('p.categoryLvl3 = :lvl3')
-                        ->setParameter('lvl3', $lvl3);
-                }
-            }
         }
 
+        if ($lvl2) {
+            $queryBuilder->andWhere('p.categoryLvl2 = :lvl2')
+                ->setParameter('lvl2', $lvl2);
+        }
+
+        if ($lvl3) {
+            $queryBuilder->andWhere('p.categoryLvl3 = :lvl3')
+                ->setParameter('lvl3', $lvl3);
+        }
 
         if (!empty($attributes)) {
             $attributes = explode(",", $attributes);
@@ -135,7 +126,7 @@ class ProductRepository extends ServiceEntityRepository
             $queryBuilder->andWhere(call_user_func_array([$queryBuilder->expr(), 'orX'], $attributeConditions));
         }
 
-        if ($searchValue) {
+        if ($searchValue !== null) {
             $titleCondition = $queryBuilder->expr()->like('p.title', ':searchValueTitle');
             $skuCondition = $queryBuilder->expr()->like('p.sku', ':searchValueSku');
 
@@ -145,7 +136,7 @@ class ProductRepository extends ServiceEntityRepository
             $queryBuilder->setParameter('searchValueSku', '%' . $searchValue . '%');
         }
 
-        if($orderBy){
+        if ($orderBy !== null) {
             $queryBuilder->orderBy("p.$orderBy", 'ASC');
         }
 
@@ -157,6 +148,7 @@ class ProductRepository extends ServiceEntityRepository
 
         return $paginator;
     }
+
 
     public function GetAllProducts()
     {
@@ -164,59 +156,76 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getArrayResult();
     }
-    public function getCatalogByMigvanArray(int $page = 1, string $userExtId = null, int $itemsPerPage = 24, int $lvl1, int $lvl2, int $lvl3, ?string $orderBy = null, ?string $attributes, ?string $searchValue, ?array $onlineMigvan): Paginator
+
+    public function getSpecialProducts()
     {
-        $firstResult = ($page - 1) * $itemsPerPage;
-        $queryBuilder = $this->_em->createQueryBuilder();
-        $queryBuilder->select('p')
-            ->from(Product::class, 'p')
-            ->andWhere('p.isPublished = true');
-
-        if (!empty($onlineMigvan)) {
-            $queryBuilder->andWhere($queryBuilder->expr()->in('p.sku', $onlineMigvan));
-        }
-
-        if ($lvl1) {
-            $queryBuilder->andWhere('p.categoryLvl1 = :lvl1')
-                ->setParameter('lvl1', $lvl1);
-
-            if ($lvl2) {
-                $queryBuilder->andWhere('p.categoryLvl2 = :lvl2')
-                    ->setParameter('lvl2', $lvl2);
-
-                if ($lvl3) {
-                    $queryBuilder->andWhere('p.categoryLvl3 = :lvl3')
-                        ->setParameter('lvl3', $lvl3);
-                }
-            }
-        }
-
-        if (!empty($attributes)) {
-            $attributes = explode(",", $attributes);
-            $queryBuilder->join('p.productAttributes', 'pa');
-            $attributeConditions = [];
-            foreach ($attributes as $index => $attribute) {
-                $attributeConditions[] = $queryBuilder->expr()->eq('pa.attributeSub', ":attribute$index");
-                $queryBuilder->setParameter("attribute$index", $attribute);
-            }
-            $queryBuilder->andWhere(call_user_func_array([$queryBuilder->expr(), 'orX'], $attributeConditions));
-        }
-
-        if ($searchValue) {
-            $queryBuilder->andWhere($queryBuilder->expr()->like('p.title', ':searchValue'));
-            $queryBuilder->setParameter('searchValue', '%' . $searchValue . '%');
-        }
-
-        if($orderBy){
-            $queryBuilder->orderBy("p.$orderBy", 'ASC');
-        }
-
-        $query = $queryBuilder->getQuery()
-            ->setFirstResult($firstResult)
-            ->setMaxResults($itemsPerPage);
-        $doctrinePaginator = new DoctrinePaginator($query);
-        $paginator = new Paginator($doctrinePaginator);
-
-        return $paginator;
+        return $this->createQueryBuilder('p')
+            ->where('p.isSpecial = true')
+            ->getQuery()
+            ->getResult();
     }
+
+    public function getNewProducts()
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.isNew = true')
+            ->getQuery()
+            ->getResult();
+    }
+
+//    public function getCatalogByMigvanArray(int $page = 1, string $userExtId = null, int $itemsPerPage = 24, int $lvl1, int $lvl2, int $lvl3, ?string $orderBy = null, ?string $attributes, ?string $searchValue, ?array $onlineMigvan): Paginator
+//    {
+//        $firstResult = ($page - 1) * $itemsPerPage;
+//        $queryBuilder = $this->_em->createQueryBuilder();
+//        $queryBuilder->select('p')
+//            ->from(Product::class, 'p')
+//            ->andWhere('p.isPublished = true');
+//
+//        if (!empty($onlineMigvan)) {
+//            $queryBuilder->andWhere($queryBuilder->expr()->in('p.sku', $onlineMigvan));
+//        }
+//
+//        if ($lvl1) {
+//            $queryBuilder->andWhere('p.categoryLvl1 = :lvl1')
+//                ->setParameter('lvl1', $lvl1);
+//
+//            if ($lvl2) {
+//                $queryBuilder->andWhere('p.categoryLvl2 = :lvl2')
+//                    ->setParameter('lvl2', $lvl2);
+//
+//                if ($lvl3) {
+//                    $queryBuilder->andWhere('p.categoryLvl3 = :lvl3')
+//                        ->setParameter('lvl3', $lvl3);
+//                }
+//            }
+//        }
+//
+//        if (!empty($attributes)) {
+//            $attributes = explode(",", $attributes);
+//            $queryBuilder->join('p.productAttributes', 'pa');
+//            $attributeConditions = [];
+//            foreach ($attributes as $index => $attribute) {
+//                $attributeConditions[] = $queryBuilder->expr()->eq('pa.attributeSub', ":attribute$index");
+//                $queryBuilder->setParameter("attribute$index", $attribute);
+//            }
+//            $queryBuilder->andWhere(call_user_func_array([$queryBuilder->expr(), 'orX'], $attributeConditions));
+//        }
+//
+//        if ($searchValue) {
+//            $queryBuilder->andWhere($queryBuilder->expr()->like('p.title', ':searchValue'));
+//            $queryBuilder->setParameter('searchValue', '%' . $searchValue . '%');
+//        }
+//
+//        if($orderBy){
+//            $queryBuilder->orderBy("p.$orderBy", 'ASC');
+//        }
+//
+//        $query = $queryBuilder->getQuery()
+//            ->setFirstResult($firstResult)
+//            ->setMaxResults($itemsPerPage);
+//        $doctrinePaginator = new DoctrinePaginator($query);
+//        $paginator = new Paginator($doctrinePaginator);
+//
+//        return $paginator;
+//    }
 }
